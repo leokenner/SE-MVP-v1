@@ -31,21 +31,25 @@ function recordView(input)
 			table.appendRow(row);
 			table.setHeight(row.height+table.height);
 			
-			var full_record = getAppointmentsForIncidentLocal(input.entry.id);
+			var full_record = getAppointmentsForEntryLocal(input.entry.id);
 			for(var i=0;i < full_record.length; i++) {
 				var appointment = full_record[i];
 				var doctor = getDoctorByAppointmentLocal(appointment.id);
 				appointment.doctor = doctor[0];
 				appointment.symptoms = getSymptomsOfAppointmentLocal(appointment.id);
-				var treatments = getTreatmentsForAppointmentLocal(appointment.id);
-				for(var i=0;i<treatments.length;i++) {
-					treatments[i].symptoms = getSymptomsOfTreatmentLocal(treatments[i].id);
-					treatments[i].sideEffects = getSideEffectsOfTreatmentLocal(treatments[i].id);
+				appointment.activities = getActivitiesForAppointmentLocal(appointment.id);
+				appointment.treatments = getTreatmentsForAppointmentLocal(appointment.id);
+				for(var i=0;i<appointment.activities.length;i++) {
+					appointment.activities[i].goals = getGoalsOfActivityLocal(appointment.activities[i].id);
+				}
+				for(var i=0;i<appointment.treatments.length;i++) {
+					appointment.treatments[i].symptoms = getSymptomsOfTreatmentLocal(appointment.treatments[i].id);
+					appointment.treatments[i].sideEffects = getSideEffectsOfTreatmentLocal(appointment.treatments[i].id);
 				}
 				
 				
 				var appointmentView = require('ui/common/views/appointmentView');
-				appointmentView = new appointmentView({ appointment: appointment, treatments: treatments });
+				appointmentView = new appointmentView(appointment);
 			
 				var row = Ti.UI.createTableViewRow();
 				row.add(appointmentView);
@@ -108,15 +112,14 @@ function recordView(input)
 	
 	newAppointment_btn.addEventListener('click', function() {
 		var appointment_form = require('ui/common/forms/appointment_form');
-		var appointment = { id: null, incident_id: input.incident.id };
-		var treatments = null;
-		appointment_form = new appointment_form({ appointment: appointment, treatments: treatments });
+		var appointment = { id: null, entry_id: input.entry.id, activities: null, treatments: null, };
+		appointment_form = new appointment_form(appointment);
 		appointment_form.open();
 		
 		appointment_form.addEventListener('close', function() {
-			if(appointment_form.appointment != null || appointment_form.treatments != null) { 
+			if(appointment_form.result != null) { 
 				var appointment = require('ui/common/views/appointmentView');
-				appointment = new appointment({ appointment: appointment_form.appointment, treatments: appointment_form.treatments });
+				appointment = new appointment(appointment_form.result);
 			
 				var row = Ti.UI.createTableViewRow();
 				row.add(appointment);

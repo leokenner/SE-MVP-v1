@@ -58,19 +58,7 @@ function entryView(input)
 			{
 				input = entryWindow.result;
 				dateTime.text = input.date?input.date:'';
-				main_entry.text = input.main_entry;
-				
-			/*	if(input.goals) {
-	
-					goals_text = 'Goals: ' 
-					for(var i=0; i < input.goals.length; i++) {
-						goals_text += input.goals[i];
-						if(i != input.goals.length -1) { goals_text += ', '; }
-					}
-				}
-				else { goals_text = ''; }
-				
-				goals.text = goals_text; */			
+				main_entry.text = input.main_entry;	
 			}
 		});
 	});
@@ -86,9 +74,11 @@ function entryView(input)
 		prescription.open(); 
 	
 		prescription.addEventListener('close', function() {
-			status.text = prescription.result.activities.length+' activities and '+prescription.result.treatments.length+' treatments';
+			input.activities = prescription.result.activities;
+			input.treatments = prescription.result.treatments;
+			status.text = input.activities.length+' activities and '+input.treatments.length+' treatments';
 		});
-	})
+	});
 	
 	return view;	
 }

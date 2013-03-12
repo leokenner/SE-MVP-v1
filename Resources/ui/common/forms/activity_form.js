@@ -29,21 +29,6 @@ var activity = {
 		goals_string += activity.goals[i];
 		if(i != activity.goals.length -1) goals_string += ', ';
 	}
-	
-function getBackgroundColor(the_activity)
-{
-	if(the_activity.successful == true) {  //It is was declared successful
-		return 'green';
-	}
-	else if(isValidDate(the_activity.end_date)) {  //If the treatment is still in progress
-		return 'white';
-	}
-	else { 
-		return 'red';   							//If the treatment has ended and an outcome has not been entered
-	}
-	
-	return 'white';
-}
 
 var window = Titanium.UI.createWindow({
   backgroundColor:'white',
@@ -69,7 +54,7 @@ window.rightNavButton = save_btn;
 save_btn.addEventListener('click', function() {
 	if(table.scrollable == false) { return; }
 
-	var activity_test = false, frequency_test = false, date_test = false;
+	var activity_test = false, frequency_test = false, date_test = false, goals_test=false;
 	
 	if(activity_field.value == null || activity_field.value == '') {
 		alert('You do not seem to have entered anything for activity. Please re-check');
@@ -82,8 +67,12 @@ save_btn.addEventListener('click', function() {
 	else if(!isStartBeforeEnd(start_date.text,end_date.text)) 
 	{ alert('Your end date seems to be before your start date. Please correct'); }
 	else { date_test = true; }
+	if(goals_field.value == null || goals_field.value == '') {
+		alert('You must list at least one goal');
+	}
+	else { goals_test=true; }
 	
-	if(activity_test && frequency_test && date_test)
+	if(activity_test && frequency_test && date_test && goals_test)
 	{
 		if(activity.id == null) {
 			if(activity.appointment_id != null) {
@@ -98,15 +87,21 @@ save_btn.addEventListener('click', function() {
 		else {
 				updateActivityLocal(activity.id,start_date.text,end_date.text,activity_field.value,location.value,frequency.text);
 		}
-		deleteGoalsForEntryLocal(activity.id);
+		deleteGoalsForActivityLocal(activity.id);
 		activity.goals.splice(0, activity.goals.length);
-		var final_goals = goals_field.value.split(',');
-		for(var i=0;i < final_goals.length; i++) {
-				insertGoalForActivityLocal(activity.id,final_goals[i]);
-				activity.goals.push(final_goals[i]);
+		if(goals_field.value != null) {
+			if(goals_field.value.length > 1) {
+				var final_goals = goals_field.value.split(',');
+				for(var i=0;i < final_goals.length; i++) {
+					if(final_goals[i].length < 2) continue;
+					final_goals[i] = final_goals[i].replace(/^\s\s*/, '');  // Remove Preceding white space
+					insertGoalForActivityLocal(activity.id,final_goals[i]);
+					activity.goals.push(final_goals[i]);
+				}
+			}
 		}
 		
-		updateActivitySuccessStatus(activity.id,activity.successful);
+		updateActivitySuccessStatus(activity.id,successful_switcher.value);
 		if(endNotes_field.value != null || endNotes_field.value.length > 1) updateActivityEndNotes(activity.id,endNotes_field.value);
 		updateRecordTimesForIncidentLocal(activity.entry_id,timeFormatted(new Date()).date,timeFormatted(new Date()).time);
 		
@@ -123,10 +118,11 @@ save_btn.addEventListener('click', function() {
 
 var table = Ti.UI.createTableView({
 		style: 1,
+		showVerticalScrollIndicator: false,
 		rowHeight: 45,
 	});
 	
-	var sectionGoals = Ti.UI.createTableViewSection({ headerTitle: 'Goals' });
+	var sectionGoals = Ti.UI.createTableViewSection({ headerTitle: '*Goals(list using commas)' });
 	sectionGoals.add(Ti.UI.createTableViewRow({ height: 90, selectedBackgroundColor: 'white' }));
 	var goals_field = Titanium.UI.createTextArea({ hintText: 'Seperate each goal by comma', value: goals_string, width: '100%', top: 5, font: { fontSize: 17 }, height: 70, borderRadius: 10 });
 	sectionGoals.rows[0].add(goals_field);

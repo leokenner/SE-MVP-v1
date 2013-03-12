@@ -5,17 +5,17 @@ function initAppointmentsDBLocal()
 {
 	Ti.include('ui/common/database/database.js');
 	
-	db.execute('CREATE TABLE IF NOT EXISTS appointments (ID INTEGER PRIMARY KEY AUTOINCREMENT, INCIDENT_ID INTEGER NOT NULL, DATE TEXT NOT NULL, TIME TEXT NOT NULL, COMPLETE INTEGER, DIAGNOSIS TEXT, FOREIGN KEY(INCIDENT_ID) REFERENCES incidents (ID))');
+	db.execute('CREATE TABLE IF NOT EXISTS appointments (ID INTEGER PRIMARY KEY AUTOINCREMENT, ENTRY_ID INTEGER NOT NULL, DATE TEXT NOT NULL, TIME TEXT NOT NULL, COMPLETE INTEGER, DIAGNOSIS TEXT, FOREIGN KEY(ENTRY_ID) REFERENCES entries (ID))');
 	db.execute('CREATE TABLE IF NOT EXISTS appointment_doctors (APPOINTMENT_ID INTEGER NOT NULL, NAME TEXT, LOCATION TEXT, STREET TEXT, CITY TEXT, STATE TEXT, ZIP INTEGER, COUNTRY TEXT, FOREIGN KEY(APPOINTMENT_ID) REFERENCES appointments (ID))');
 	db.execute('CREATE TABLE IF NOT EXISTS appointment_symptoms (APPOINTMENT_ID INTEGER NOT NULL, SYMPTOM TEXT NOT NULL, FOREIGN KEY(APPOINTMENT_ID) REFERENCES appointments (ID))');
 
 }
 
 
-function insertAppointmentLocal(incident_id,date, time, diagnosis) 
+function insertAppointmentLocal(entry_id,date, time, diagnosis) 
 { 
-	var sql = "INSERT INTO appointments (incident_id, date, time, diagnosis) VALUES ("; 
-	sql = sql + "'" + incident_id + "', ";
+	var sql = "INSERT INTO appointments (entry_id, date, time, diagnosis) VALUES ("; 
+	sql = sql + "" + entry_id + ", ";
 	sql = sql + "'" + date.replace("'", "''") + "', ";
 	sql = sql + "'" + time.replace("'", "''") + "', ";	 
 	sql = sql + "'" + diagnosis + "')";
@@ -65,8 +65,9 @@ function getAllAppointmentsLocal()
     while (resultSet.isValidRow()) {
 			results.push({
 			  id: resultSet.fieldByName('id'),
-			  incident_id: resultSet.fieldByName('incident_id'),
+			  entry_id: resultSet.fieldByName('entry_id'),
 		   	  diagnosis: resultSet.fieldByName('diagnosis'),
+		   	  complete: resultSet.fieldByName('complete'),
 		   	  date: resultSet.fieldByName('date'),
 		   	  time: resultSet.fieldByName('time'),
 	        });
@@ -78,17 +79,18 @@ function getAllAppointmentsLocal()
 }
 
 
-function getAppointmentsForIncidentLocal(incident_id) 
+function getAppointmentsForEntryLocal(entry_id) 
 { 
-	var sql = "SELECT * FROM appointments WHERE INCIDENT_ID='"+incident_id+"'"; 
+	var sql = "SELECT * FROM appointments WHERE ENTRY_ID='"+entry_id+"'"; 
 	
 	var results = [];
 	var resultSet = db.execute(sql);
     while (resultSet.isValidRow()) {
 			results.push({
 			  id: resultSet.fieldByName('id'),
-			  incident_id: resultSet.fieldByName('incident_id'),
+			  entry_id: resultSet.fieldByName('entry_id'),
 		   	  diagnosis: resultSet.fieldByName('diagnosis'),
+		   	  complete: resultSet.fieldByName('complete'),
 		   	  date: resultSet.fieldByName('date'),
 		   	  time: resultSet.fieldByName('time'),
 	        });
@@ -110,8 +112,9 @@ function getAppointmentLocal(appointment_id)
     while (resultSet.isValidRow()) {
 			results.push({
 			  id: resultSet.fieldByName('id'),
-			  incident_id: resultSet.fieldByName('incident_id'),
+			  entry_id: resultSet.fieldByName('entry_id'),
 		   	  diagnosis: resultSet.fieldByName('diagnosis'),
+		   	  complete: resultSet.fieldByName('complete'),
 		   	  date: resultSet.fieldByName('date'),
 		   	  time: resultSet.fieldByName('time'),
 	        });
@@ -195,11 +198,11 @@ function updateDoctorForAppointmentLocal(id, name, location, street, city ,state
 
 function updateAppointmentCompleteStatus(appointment_id, complete_status)
 {
-	if(success_status == true) {
-		var sql = "UPDATE complete SET COMPLETE=1 ";
+	if(complete_status == true) {
+		var sql = "UPDATE appointments SET COMPLETE=1 ";
 	}
 	else {
-		var sql = "UPDATE complete SET COMPLETE=0 ";
+		var sql = "UPDATE appointments SET COMPLETE=0 ";
 	}
 
 	sql = sql + "WHERE ID='"+appointment_id+"'"; 

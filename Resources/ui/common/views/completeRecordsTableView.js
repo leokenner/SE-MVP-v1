@@ -14,23 +14,15 @@ function completeRecordsTableView()
   			if(a < b) return 1;
 			return 0;
 		});	
-		var record;
-		var view;
+
 		for(var i=0;i<records.length;i++) {
 			if(records[i].current_type == 'entry') {
 				var entry = getEntryLocal(records[i].current);
 				entry = entry[0];
 				entry.goals = getGoalsOfEntryLocal(entry.id);
-				record = require('ui/common/views/recordView');
-				view = new record({ entry: entry });
+				var record = require('ui/common/views/recordView');
+				var view = new record({ entry: entry });
 			}
-			else if(records[i].current_type == 'incident') {
-				var incident = getIncidentLocal(records[i].current);
-				incident = incident[0];
-				incident.symptoms = getSymptomsOfIncidentLocal(incident.id);
-				record = require('ui/common/views/recordView');
-				view = new record({ incident: incident });
-			}	
 				var row = Ti.UI.createTableViewRow();
 				row.add(view);
 				
@@ -51,7 +43,7 @@ function completeRecordsTableView()
 	
 	var self = Ti.UI.createView();
 	
-	var newIncident_btn = Ti.UI.createLabel({
+	var newEntry_btn = Ti.UI.createLabel({
 		text: 'New Entry',
 		textAlign: 'center',
 		font: { fontSize: 20, fontWeight: 'bold' },
@@ -64,7 +56,7 @@ function completeRecordsTableView()
 		left: 0,
 		zIndex: 2
 	});
-	self.add(newIncident_btn);
+	self.add(newEntry_btn);
 	
 	var table = Ti.UI.createTableView({
 		backgroundColor: '#CCC',
@@ -116,29 +108,29 @@ function completeRecordsTableView()
 	});
 	
 	
-	newIncident_btn.addEventListener('click', function() {
+	newEntry_btn.addEventListener('click', function() {
 		var entry = require('ui/common/forms/entry_form');
 		entry = new entry({ id: null });
 		entry.open();
 		
 		entry.addEventListener('close', function() {
 			if(entry.result != null) {
-			/*	var record = require('ui/common/record');
-				var newRecordView = new record({ incident: incidentWindow.result });
-				
+				var record = require('ui/common/views/recordView');
+				var view = new record({ entry: entry.result });
+			
 				var row = Ti.UI.createTableViewRow();
-				row.add(newRecordView);
+				row.add(view);
 				
-				row.setHeight(newRecordView.height+40);
+				row.setHeight(view.height+40);
 				
-				Ti.App.addEventListener('eventAdded', function() {
-					row.setHeight(newRecordView.height+40);
+				//If another appointment is added, increase the height of the row
+				Ti.App.addEventListener('eventAdded', function() {  
+					row.setHeight(view.height+40);
 				});
 				
-				sectionRecords.add(row);
+				sectionRecords.unshift(row);
 				table.data = [sectionRecords, sectionPersonal];
-				table.scrollToIndex(0); */
-				loadTable();
+				table.scrollToIndex(0);
 			}
 		}); 
 	});

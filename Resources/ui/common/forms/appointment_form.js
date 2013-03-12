@@ -8,13 +8,14 @@ function appointment(input)
 	Ti.include('ui/common/database/database.js');
 	
 	var appointment = {
-		id: input.appointment.id?input.appointment.id:null,
-		incident_id: input.appointment.incident_id?input.appointment.incident_id:null,
-		diagnosis: input.appointment.diagnosis?input.appointment.diagnosis:null,
-		date: input.appointment.date?input.appointment.date:timeFormatted(new Date).date,
-		time: input.appointment.time?input.appointment.time:timeFormatted(new Date).time,
-		symptoms: input.appointment.symptoms?input.appointment.symptoms:[],
-		doctor: input.appointment.doctor?input.appointment.doctor:{
+		id: input.id?input.id:null,
+		entry_id: input.entry_id?input.entry_id:null,
+		diagnosis: input.diagnosis?input.diagnosis:null,
+		complete: input.complete?input.complete:false,
+		date: input.date?input.date:timeFormatted(new Date).date,
+		time: input.time?input.time:timeFormatted(new Date).time,
+		symptoms: input.symptoms?input.symptoms:[],
+		doctor: input.doctor?input.doctor:{
 								name: null,
 								location: null,
 								street: null,
@@ -23,9 +24,9 @@ function appointment(input)
 								zip: null,
 								country: 'USA',
 								},
-	}
-	
-	var treatments = input.treatments?input.treatments:[]; 
+		activities: input.activities?input.activities:[],
+		treatments: input.treatments?input.treatments:[],	
+	} 
 	
 	var symptoms_string='';
 	for(var i=0;i < appointment.symptoms.length; i++) {
@@ -42,8 +43,7 @@ function appointment(input)
 	
 	var navGroupWindow = require('ui/handheld/ApplicationNavGroup');
 		navGroupWindow = new navGroupWindow(window);
-		navGroupWindow.appointment = null;
-		navGroupWindow.treatments = null;
+		navGroupWindow.result = null;
 	
 	var warning = Ti.UI.createView({
 	width: '100%',
@@ -89,8 +89,11 @@ function appointment(input)
 		
 		if(dateTime_test && name_test && symptoms_test)
 		{
+			if(diagnosis.value != null) { diagnosis.value = diagnosis.value.replace("'", "''"); } //If diagnosis exists, remove quotes before submitting
+			
 			if(appointment.id == null) {
-				appointment.id = insertAppointmentLocal(appointment.incident_id,appointment.date,appointment.time,diagnosis.value);
+				var entry_id = '"'+appointment.entry_id+'"';
+				appointment.id = insertAppointmentLocal(entry_id,appointment.date,appointment.time,diagnosis.value);
 				appointment.doctor.id = insertDoctorForAppointmentLocal(appointment.id,name.value,location.value,street.value,city.value,state.value,zip.value,country.value);
 			}
 			else {
@@ -99,10 +102,17 @@ function appointment(input)
 			}
 			deleteSymptomsForAppointmentLocal(appointment.id);
 			appointment.symptoms.splice(0, appointment.symptoms.length);
-			var final_symptoms = symptoms_field.value.split(',');
-			for(var i=0;i < final_symptoms.length;i++) {
-				insertSymptomForAppointmentLocal(appointment.id,final_symptoms[i]);
-				appointment.symptoms.push(final_symptoms[i]);
+			
+			if(symptoms_field.value != null) {
+				if(symptoms_field.value.length > 1) {
+					var final_symptoms = symptoms_field.value.split(',');
+					for(var i=0;i < final_symptoms.length;i++) {
+						if(final_symptoms[i].length < 2) continue;
+						final_symptoms[i] = final_symptoms[i].replace(/^\s\s*/, '');  // Remove Preceding white space
+						insertSymptomForAppointmentLocal(appointment.id,final_symptoms[i]);
+						appointment.symptoms.push(final_symptoms[i]);
+					}
+				}
 			}
 			
 			updateAppointmentCompleteStatus(appointment.id,complete_switcher.value);
@@ -115,8 +125,9 @@ function appointment(input)
 			appointment.doctor.state = state.value;
 			appointment.doctor.zip = zip.value;
 			appointment.doctor.country = country.value;
-			navGroupWindow.appointment = appointment;
-			navGroupWindow.treatments = treatments;
+			appointment.complete = complete_switcher.value;
+			appointment.diagnosis = diagnosis.value;
+			navGroupWindow.result = appointment;
 			navGroupWindow.close();
 		}
 
@@ -133,18 +144,24 @@ function appointment(input)
 
 
 var sectionDetails = Ti.UI.createTableViewSection({ headerTitle: 'Doctor Details(*=required)' });
-sectionDetails.add(Ti.UI.createTableViewRow({ title: '*Name' }));
-sectionDetails.add(Ti.UI.createTableViewRow({ title: 'Location' }));
-sectionDetails.add(Ti.UI.createTableViewRow({ title: 'Address', height: 135 }));
+sectionDetails.add(Ti.UI.createTableViewRow());
+sectionDetails.add(Ti.UI.createTableViewRow());
+sectionDetails.add(Ti.UI.createTableViewRow({ height: 135 }));
+var name_title = Titanium.UI.createLabel({ text: '*Name', left: 15, font: { fontWeight: 'bold', fontSize: 18, }, });
 var name = Ti.UI.createTextField({ hintText: 'eg: James Smith', value: appointment.doctor.name, left: '40%', width: '60%' });
+var location_title = Titanium.UI.createLabel({ text: 'Location', left: 15, font: { fontWeight: 'bold', fontSize: 18, }, });
 var location = Ti.UI.createTextField({ hintText: 'Clinic/Hospital name', value: appointment.doctor.location, left: '40%', width: '60%' });
+var address_title = Titanium.UI.createLabel({ text: 'Address', left: 15, font: { fontWeight: 'bold', fontSize: 18, }, });
 var street = Ti.UI.createTextField({ hintText: 'Street', value: appointment.doctor.street, borderColor: '#CCC', leftButtonPadding: 5, height: 45, width: '60%', left: '40%', top: 0 });
 var city = Ti.UI.createTextField({ hintText: 'City', value: appointment.doctor.city, borderColor: '#CCC', leftButtonPadding: 5, left: '40%', height: 45, width: '40%',  top: 45 });
 var state = Ti.UI.createTextField({ hintText: 'State', value: appointment.doctor.state, borderColor: '#CCC', leftButtonPadding: 5, left: '80%', height: 45, width: '20%', top: 45 });
 var zip = Ti.UI.createTextField({ hintText: 'ZIP', value: appointment.doctor.zip, borderColor: '#CCC', leftButtonPadding: 5, left: '40%', height: 45, width: '20%', top: 90 });
 var country = Ti.UI.createTextField({ hintText: 'Country', value: appointment.doctor.country, borderColor: '#CCC', leftButtonPadding: 5, left: '60%', height: 45, width: '40%', top: 90 });
+sectionDetails.rows[0].add(name_title);
 sectionDetails.rows[0].add(name);
+sectionDetails.rows[1].add(location_title);
 sectionDetails.rows[1].add(location);
+sectionDetails.rows[2].add(address_title);
 sectionDetails.rows[2].add(street);
 sectionDetails.rows[2].add(city);
 sectionDetails.rows[2].add(state);
@@ -154,41 +171,26 @@ sectionDetails.rows[2].add(country);
 var sectionDateTime = Ti.UI.createTableViewSection({ headerTitle: 'Date and Time(tap to change)' });
 sectionDateTime.add(Ti.UI.createTableViewRow({ title: appointment.date+' '+appointment.time, height: 35, selectedBackgroundColor: 'white' }));
 
-var sectionSymptoms = Ti.UI.createTableViewSection({ headerTitle: 'Symptoms (minimum one)' });
+var sectionSymptoms = Ti.UI.createTableViewSection({ headerTitle: '*Symptoms(list using commas)' });
 sectionSymptoms.add(Ti.UI.createTableViewRow({ height: 90, selectedBackgroundColor: 'white' }));
 var symptoms_field = Titanium.UI.createTextArea({ hintText: 'Seperate each symptom by comma', value: symptoms_string, width: '100%', top: 5, font: { fontSize: 17 }, height: 70, borderRadius: 10 });
-sectionGoals.rows[0].add(goals_field);
+sectionSymptoms.rows[0].add(symptoms_field);
 
 var sectionDiagnosis = Ti.UI.createTableViewSection();
-sectionDiagnosis.add(Ti.UI.createTableViewRow({ title: 'Complete', selectedBackgroundColor: 'white' }));
-sectionDiagnosis.add(Ti.UI.createTableViewRow({ title: 'Diagnosis', selectedBackgroundColor: 'white' }));
-var complete_switcher = Titanium.UI.createSwitch({ value: switcher_value, right: 10 });
-sectionSuccess.rows[0].add(complete_switcher);
+sectionDiagnosis.add(Ti.UI.createTableViewRow({ selectedBackgroundColor: 'white' }));
+sectionDiagnosis.add(Ti.UI.createTableViewRow({ selectedBackgroundColor: 'white' }));
+var complete_title = Titanium.UI.createLabel({ text: 'Complete', left: 15, font: { fontWeight: 'bold', fontSize: 18, }, });
+var complete_switcher = Titanium.UI.createSwitch({ value: appointment.complete, left: '50%', });
+var diagnosis_title = Titanium.UI.createLabel({ text: 'Diagnosis', left: 15, font: { fontWeight: 'bold', fontSize: 18, }, });
 var diagnosis = Titanium.UI.createTextField({ hintText: 'Enter here', value: appointment.diagnosis, width: '50%', left: '50%' });
-sectionDetails.rows[1].add(diagnosis);
-
-var sectionPrescription = Ti.UI.createTableViewSection();
-sectionPrescription.add(Ti.UI.createTableViewRow({ title: 'Prescribed Medication', height: 45, selectedBackgroundColor: 'white', hasChild: true }));
+sectionDiagnosis.rows[0].add(complete_title);
+sectionDiagnosis.rows[0].add(complete_switcher);
+sectionDiagnosis.rows[1].add(diagnosis_title);
+sectionDiagnosis.rows[1].add(diagnosis);
 
 
 table.data = [sectionDateTime, sectionDetails, sectionSymptoms, sectionDiagnosis ];
 window.add(table);
-
-
-sectionPrescription.addEventListener('click', function() {
-	var prescription = require('ui/common/forms/prescription_form');
-		prescription = new prescription({ navGroupWindow: navGroupWindow, appointment: appointment, treatments: treatments });
-		
-	var children = navGroupWindow.getChildren();
-		children[0].open(prescription); //open the prescription window in the navgroup   
-	
-	prescription.addEventListener('close', function() {
-		if(prescription.result != null) {
-			appointment.diagnosis = prescription.result.appointment.diagnosis;
-			treatments = prescription.result.treatments;
-		}
-	});
-});
 
 sectionDateTime.addEventListener('click', function(e) {
 	

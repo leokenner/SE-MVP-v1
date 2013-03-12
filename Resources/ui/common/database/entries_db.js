@@ -17,7 +17,7 @@ function insertEntryLocal(record_id, main_entry, date, location)
 { 
 	var sql = "INSERT INTO entries (record_id, main_entry, date, location) VALUES ("; 
 	sql = sql + "'" + record_id + "', ";
-	sql = sql + "'" + main_entry + "', "; 
+	sql = sql + "'" + main_entry.replace("'", "''") + "', "; 
 	sql = sql + "'" + date.replace("'", "''") + "', "; 
 	sql = sql + "'" + location + "')";
 	db.execute(sql); 
@@ -107,7 +107,7 @@ function getGoalsOfEntryLocal(entry_id)
 
 function updateEntryLocal(entry_id, main_entry, date, location) 
 { 
-	var sql = "UPDATE entries SET MAIN_ENTRY='"+main_entry+"', ";
+	var sql = "UPDATE entries SET MAIN_ENTRY='"+main_entry.replace("'", "''")+"', ";
 	sql = sql + "DATE='"+date.replace("'","''")+"', ";
 	sql = sql + "LOCATION='"+location+"' ";
 	sql = sql + "WHERE ID='"+entry_id+"'"; 

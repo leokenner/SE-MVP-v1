@@ -38,21 +38,6 @@ var treatment = {
 		if(i != treatment.sideEffects.length -1) sideEffects_string += ', ';
 	}
 
-function getBackgroundColor(the_treatment)
-{
-	if(the_treatment.successful == true) {  //It is was declared successful
-		return 'green';
-	}
-	else if(isValidDate(the_treatment.end_date)) {  //If the treatment is still in progress
-		return 'white';
-	}
-	else { 
-		return 'red';   							//If the treatment has ended and an outcome has not been entered
-	}
-	
-	return 'white';
-}
-
 
 var window = Titanium.UI.createWindow({
   backgroundColor:'white',
@@ -112,22 +97,34 @@ save_btn.addEventListener('click', function() {
 				updateTreatmentLocal(treatment.id,start_date.text,end_date.text,medication.value,dosage.value,frequency.text);
 			}
 			deleteSymptomsForTreatmentLocal(treatment.id);
+			deleteSideEffectsForTreatmentLocal(treatment.id);
 			treatment.symptoms.splice(0, treatment.symptoms.length);
 			treatment.sideEffects.splice(0, treatment.sideEffects.length);
 			
-			var final_symptoms = symptoms_field.value.split(',');
-			for(var i=0;i < final_symptoms.length;i++) {
-				if(final_symptoms[i].length < 2) continue;
-				insertSymptomForTreatmentLocal(treatment.id,final_symptoms[i]);
-				treatment.symptoms.push(final_symptoms[i]);
+			if(symptoms_field.value != null) {
+				if(symptoms_field.value.length > 1) {
+					var final_symptoms = symptoms_field.value.split(',');
+					for(var i=0;i < final_symptoms.length;i++) {
+						if(final_symptoms[i].length < 2) continue;
+						final_symptoms[i] = final_symptoms[i].replace(/^\s\s*/, '');  // Remove Preceding white space
+						insertSymptomForTreatmentLocal(treatment.id,final_symptoms[i]);
+						treatment.symptoms.push(final_symptoms[i]);
+					}
+				}
 			}
 			
-			var final_sideEffects = sideEffects_field.value.split(',');
-			for(var i=0;i < final_sideEffects.length;i++) {
-				if(final_sideEffects[i].length < 2) continue;
-				insertSideEffectForTreatmentLocal(treatment.id,final_sideEffects[i]);
-				treatment.sideEffects.push(final_sideEffects[i]);
+			if(sideEffects_field.value != null) {
+				if(sideEffects_field.value.length > 1) {
+					var final_sideEffects = sideEffects_field.value.split(',');
+					for(var i=0;i < final_sideEffects.length;i++) {
+						if(final_sideEffects[i].length < 2) continue;
+						final_sideEffects[i] = final_sideEffects[i].replace(/^\s\s*/, '');  // Remove Preceding white space
+						insertSideEffectForTreatmentLocal(treatment.id,final_sideEffects[i]);
+						treatment.sideEffects.push(final_sideEffects[i]);
+					}
+				}
 			}
+			
 			
 			updateTreatmentSuccessStatus(treatment.id,successful_switcher.value);
 			//var record_incident_id = getAppointmentLocal(treatment.appointment_id)[0].incident_id;
@@ -180,33 +177,11 @@ sectionDetails.rows[3].add(dosage);
 sectionDetails.rows[4].add(frequency_title);
 sectionDetails.rows[4].add(frequency);
 
-var sectionSymptoms = Ti.UI.createTableViewSection({ headerTitle: 'Symptoms (minimum one)' });
+var sectionSymptoms = Ti.UI.createTableViewSection({ headerTitle: '*Symptoms(list using commas)' });
 sectionSymptoms.add(Ti.UI.createTableViewRow({ height: 90, selectedBackgroundColor: 'white' }));
 var symptoms_field = Titanium.UI.createTextArea({ hintText: 'Seperate each symptom by comma', value: symptoms_string, width: '100%', top: 5, font: { fontSize: 17 }, height: 70, borderRadius: 10 });
 sectionSymptoms.rows[0].add(symptoms_field);
 
-/*
-var outcome_backgroundColor = getBackgroundColor(treatment);
-
-var sectionOutcome = Ti.UI.createTableViewSection();
-sectionOutcome.add(Ti.UI.createTableViewRow({ title: 'Outcome of treatment', height: 45, backgroundColor: outcome_backgroundColor, selectedBackgroundColor: 'white', hasChild: true }));
-
-sectionOutcome.addEventListener('click', function(e) {
-	var outcome = require('ui/common/forms/treatmentOutcome_form');
-		outcome = new outcome({ navGroupWindow: navGroupWindow, treatment: treatment });
-		
-	var children = navGroupWindow.getChildren();
-		children[0].open(outcome); //open the prescription window in the navgroup   
-	
-	outcome.addEventListener('close', function() {
-		if(outcome.result != null) {
-			e.rowData.backgroundColor = getBackgroundColor(outcome.result);
-			treatment.successful = outcome.result.successful;
-			treatment.sideEffects = outcome.result.sideEffects;
-		}
-	});
-});
-*/
 var sectionOutcome = Ti.UI.createTableViewSection();
 sectionOutcome.add(Ti.UI.createTableViewRow({ height: 45, selectedBackgroundColor: 'white' }));
 var success_title = Titanium.UI.createLabel({ text: 'Successful?', left: 15, font: { fontWeight: 'bold', fontSize: 18, }, });
@@ -214,7 +189,7 @@ var successful_switcher = Titanium.UI.createSwitch({ value: treatment.successful
 sectionOutcome.rows[0].add(success_title);
 sectionOutcome.rows[0].add(successful_switcher);
 
-var sectionSideEffects = Ti.UI.createTableViewSection({ headerTitle: 'Side effects of treatment' });
+var sectionSideEffects = Ti.UI.createTableViewSection({ headerTitle: 'Side effects(list using commas)' });
 sectionSideEffects.add(Ti.UI.createTableViewRow({ height: 90, selectedBackgroundColor: 'white' }));
 var sideEffects_field = Titanium.UI.createTextArea({ hintText: 'Seperate each entry by comma', value: sideEffects_string, width: '100%', top: 5, font: { fontSize: 17 }, height: 70, borderRadius: 10 });
 sectionSideEffects.rows[0].add(sideEffects_field);

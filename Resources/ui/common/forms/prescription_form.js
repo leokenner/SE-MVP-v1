@@ -43,26 +43,30 @@ function loadTreatments()
 		
 		symptoms_list = '';
 		var length = (treatments[i].symptoms.length<2)?treatments[i].symptoms.length:2;
-		for(var j=0;j < length;j++) { symptoms_list += treatments[i].symptoms[j] + ', '; }
+		for(var j=0;j < length;j++) { 
+			symptoms_list += treatments[i].symptoms[j];
+			if(j != length-1) symptoms_list += ', '; 
+		}
 		var difference = treatments[i].symptoms.length - j;
 		if(difference > 0) { symptoms_list += ' and '+difference+' more'; } 
 		
 		var symptom = Titanium.UI.createLabel({ text: symptoms_list, font: { fontSize: 15 }, left: 10, top: 25 });
 		var background_color = getBackgroundColor(treatments[i]);
 		sectionTreatments.add(Ti.UI.createTableViewRow({ height: 60, backgroundColor: background_color, selectedBackgroundColor: 'white', hasChild: true, index: i }));
-		//sectionTreatments.rows[i+1].add(medication);
-		//sectionTreatments.rows[i+1].add(symptom);
 		sectionTreatments.rows[i].add(medication);
 		sectionTreatments.rows[i].add(symptom);
 	}
 	
 	for(var i=0;i < activities.length; i++) 
 	{	
-		var main_activity = Titanium.UI.createLabel({ text: activities[i].main_activity, font: {fontWeight: 'bold', fontSize: 20 }, left: 10, top: 5, width: '70%' });
+		var main_activity = Titanium.UI.createLabel({ text: activities[i].main_activity, font: {fontWeight: 'bold', fontSize: 20 }, left: 10, top: 5, height: 20, width: '70%' });
 		
 		activities_list = '';
 		var length = (activities[i].goals.length < 4)?activities[i].goals.length:4;
-		for(var j=0;j < length;j++) { activities_list += activities[i].goals[j] + ', '; }
+		for(var j=0;j < length;j++) { 
+			activities_list += activities[i].goals[j];
+			if(j != length-1) activities_list += ', ';  
+		}
 		var difference = activities[i].goals.length - j;
 		if(difference > 0) { activities_list += ' and '+difference+' more'; } 
 		
@@ -75,7 +79,7 @@ function loadTreatments()
 	if(treatments.length > 0) sectionTreatments.headerTitle = 'Treatments';
 	if(activities.length > 0) sectionActivities.headerTitle = 'Activities';
 	
-	table.data = [sectionTreatments,sectionActivities];
+	table.data = [sectionActivities,sectionTreatments];
 }	
 	
 
@@ -128,19 +132,25 @@ actionDialog.addEventListener('click', function(e) {
 				{
 					if(activity_form.result == -1)  { return; }
 					
+					var main_activity = Titanium.UI.createLabel({ text: activity_form.result.main_activity, font: {fontWeight: 'bold', fontSize: 20 }, left: 10, top: 5, height: 20, width: '70%' });
+					
 					activities_list = '';
 					var length = (activity_form.result.goals.length < 4)?activity_form.result.goals.length:4;
-					for(var j=0;j < length;j++) { activities_list += activity_form.result.goals[j] + ', '; }
+					for(var j=0;j < length;j++) { 
+						activities_list += activity_form.result.goals[j]; 
+						if(j != length-1) activities_list += ', '; 
+					}
 					var difference = activity_form.result.goals.length - j;
 					if(difference > 0) { activities_list += ' and '+difference+' more'; } 
 		
-					goal = Titanium.UI.createLabel({ text: activities_list, font: { fontSize: 15 }, left: 10, top: 5, height: 50, width: '80%' });
+					var goal = Titanium.UI.createLabel({ text: activities_list, font: { fontSize: 15 }, left: 10, top: 25, });
 					activities.push(activity_form.result);
 					sectionActivities.add(Ti.UI.createTableViewRow({ height: 60, backgroundColor: 'yellow', selectedBackgroundColor: 'white', hasChild: true, index: activities.length-1 }));
+					sectionActivities.rows[sectionActivities.rowCount-1].add(main_activity);
 					sectionActivities.rows[sectionActivities.rowCount-1].add(goal);
 					
 					sectionActivities.headerTitle = 'Activities';
-					table.data = [sectionTreatments,sectionActivities];
+					table.data = [sectionActivities,sectionTreatments];
 				}
 			});
 	}
@@ -164,7 +174,10 @@ actionDialog.addEventListener('click', function(e) {
 		
 					symptoms_list = '';
 					var length = (treatment_form.result.symptoms.length<2)?treatment_form.result.symptoms.length:2;
-					for(var j=0;j < length;j++) { symptoms_list += treatment_form.result.symptoms[j] + ', '; }
+					for(var j=0;j < length;j++) { 
+						symptoms_list += treatment_form.result.symptoms[j]; 
+						if(j != length-1) symptoms_list += ', '; 
+					}
 					var difference = treatment_form.result.symptoms.length - j;
 					if(difference > 0) { symptoms_list += ' and '+difference+' more'; } 
 		
@@ -175,7 +188,7 @@ actionDialog.addEventListener('click', function(e) {
 					sectionTreatments.rows[sectionTreatments.rowCount-1].add(symptom);
 					
 					sectionTreatments.headerTitle = 'Treatments';
-					table.data = [sectionTreatments,sectionActivities];
+					table.data = [sectionActivities,sectionTreatments];
 				}
 			});
 	}
@@ -194,23 +207,11 @@ var table = Titanium.UI.createTableView({
 	style: 1
 });
 
-/*
-var sectionDetails = Ti.UI.createTableViewSection();
-sectionDetails.add(Ti.UI.createTableViewRow({ title: 'Diagnosis:' ,  selectedBackgroundColor: 'white' }));
-var diagnosis = Titanium.UI.createTextField({ hintText: 'Enter here', value: appointment.diagnosis, width: '50%', left: '50%' });
-sectionDetails.rows[0].add(diagnosis);
-*/
-
 var sectionActivities = Ti.UI.createTableViewSection();
 var sectionTreatments = Ti.UI.createTableViewSection();
-//var add_treatment = Ti.UI.createTableViewRow({ height: 60, selectedBackgroundColor: 'white', title: 'New Treatment' });
-//sectionTreatments.add(add_treatment);
-
 loadTreatments();
 
 self.add(table);
-
-
 
 sectionTreatments.addEventListener('click', function(e) {
 		var treatment_form = require('ui/common/forms/treatment_form');
@@ -229,7 +230,7 @@ sectionTreatments.addEventListener('click', function(e) {
 						treatments.splice(e.rowData.index,1);
 						for(var i=e.rowData.index; i < treatments.length; i++) { sectionTreatments.rows[i].index = i; }
 						if(treatments.length == 0) sectionTreatments.headerTitle = '';
-						table.data = [sectionTreatments,sectionActivities];
+						table.data = [sectionActivities,sectionTreatments];
 						return;
 					}
 					
@@ -240,12 +241,15 @@ sectionTreatments.addEventListener('click', function(e) {
 		
 					symptoms_list = '';
 					var length = (treatment_form.result.symptoms.length<2)?treatment_form.result.symptoms.length:2;
-					for(var j=0;j < length;j++) { symptoms_list += treatment_form.result.symptoms[j] + ', '; }
+					for(var j=0;j < length;j++) { 
+						symptoms_list += treatment_form.result.symptoms[j]; 
+						if(j != length-1) symptoms_list += ', '; 
+					}
 					var difference = treatment_form.result.symptoms.length - j;
 					if(difference > 0) { symptoms_list += ' and '+difference+' more'; }
 					e.row.children[1].text = symptoms_list;
 					
-					table.data = [sectionTreatments,sectionActivities];
+					table.data = [sectionActivities,sectionTreatments];
 				}
 			});
 });
@@ -268,25 +272,25 @@ sectionActivities.addEventListener('click', function(e) {
 						activities.splice(e.rowData.index,1);
 						for(var i=e.rowData.index; i < activities.length; i++) { sectionActivities.rows[i].index = i; }
 						if(activities.length == 0) sectionActivities.headerTitle='';
-						table.data = [sectionTreatments,sectionActivities];
+						table.data = [sectionActivities,sectionTreatments];
 						return;
 					}
 					
 					e.rowData.backgroundColor = getBackgroundColor(activity_form.result);
 					activities[e.rowData.index] = activity_form.result;
+					e.row.children[0].text = activity_form.result.main_activity;
 					
 					activities_list = '';
 					var length = (activity_form.result.goals.length < 4)?activity_form.result.goals.length:4;
-					for(var j=0;j < length;j++) { activities_list += activity_form.result.goals[j] + ', '; }
+					for(var j=0;j < length;j++) { 
+						activities_list += activity_form.result.goals[j]; 
+						if(j != length-1) activities_list += ', '; 
+					}
 					var difference = activity_form.result.goals.length - j;
 					if(difference > 0) { activities_list += ' and '+difference+' more'; } 
-		
-					goal = Titanium.UI.createLabel({ text: activities_list, font: { fontSize: 15 }, left: 10, top: 5, height: 50, width: '80%' });
-					activities.push(activity_form.result);
-					sectionActivities.add(Ti.UI.createTableViewRow({ height: 60, backgroundColor: 'yellow', selectedBackgroundColor: 'white', hasChild: true, index: activities.length-1 }));
-					sectionActivities.rows[sectionActivities.rowCount-1].add(goal);
+					e.row.children[1].text = activities_list;
 					
-					table.data = [sectionTreatments,sectionActivities];
+					table.data = [sectionActivities,sectionTreatments];
 				}
 			});
 });

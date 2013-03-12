@@ -4,13 +4,6 @@
 function appointmentView(input) {
 
 Ti.include('ui/common/helpers/dateTime.js');
-
-var appointment = input.appointment;
-var treatments = input.treatments;
-
-
-var status_text=(treatments.length > 0)?treatments.length+' treatments prescribed':
-				(isValidDateTime(new Date(appointment.date+' '+appointment.time)))?'Scheduled':'Completed';
 			
 	
 	var view = Ti.UI.createView({
@@ -22,7 +15,7 @@ var status_text=(treatments.length > 0)?treatments.length+' treatments prescribe
 	
 	
 	var doctor = Ti.UI.createLabel({ 
-		text: appointment.doctor.name?'Dr. '+appointment.doctor.name:'Doctor Unknown', 
+		text: input.doctor.name?'Dr. '+input.doctor.name:'Doctor Unknown', 
 		left: 5,
 		font: { fontSize: 15 },
 		color: 'black',
@@ -34,7 +27,7 @@ var status_text=(treatments.length > 0)?treatments.length+' treatments prescribe
 	var top_line = Ti.UI.createView({ width: '80%', height: 1, top: 45, left: 0, borderColor: 'black' });
 	
 	var date = Ti.UI.createLabel({
-		text: appointment.date,
+		text: input.date,
 		textAlign: 1,
 		font: { fontSize: 30, fontWeight: 'bold' },
 		top: 60,
@@ -44,9 +37,14 @@ var status_text=(treatments.length > 0)?treatments.length+' treatments prescribe
 	var bottom_line = Ti.UI.createView({ width: '80%', height: 1, bottom: 40, right: 0, borderColor: 'black' });
 	
 	var status = Ti.UI.createLabel({
-		text: status_text,
+		text: input.complete?input.activities.length+' activities and '+input.treatments.length+' treatments':
+								(isValidDateTime(new Date(input.date+' '+input.time)))?'Scheduled':'Missed',
+		textAlign: 2,
 		right: 5,
-		bottom: 10,
+		width: '80%',
+		bottom: 0,
+		height: 40,
+		bubbleParent: input.complete?0:1,
 		font: { fontSize: 15, },
 		backgroundColor: 'none',
 	});
@@ -57,25 +55,43 @@ var status_text=(treatments.length > 0)?treatments.length+' treatments prescribe
 	view.add(bottom_line);
 	view.add(status);
 	
+	
 	view.addEventListener('click', function() {
 		var appointmentWindow = require('ui/common/forms/appointment_form');
-		appointmentWindow = new appointmentWindow({ appointment: appointment, treatments: treatments });
+		appointmentWindow = new appointmentWindow(input);
 		appointmentWindow.open();
 		
-		appointmentWindow.addEventListener('close', function() {
-				
-			if(appointmentWindow.appointment != null || appointmentWindow.treatment != null)
+		appointmentWindow.addEventListener('close', function() {		
+			if(appointmentWindow.result != null)
 			{
-				appointment = appointmentWindow.appointment;
-				treatments = appointmentWindow.treatments;
-				doctor.text = appointment.doctor.name?'Dr. '+appointment.doctor.name:'Doctor Unknown';
-				date.text = appointment.date;
-				
-				status_text = (treatments.length > 0)?treatments.length+' treatments prescribed':
-								(isValidDateTime(new Date(appointment.date+' '+appointment.time)))?'Scheduled':'Completed';
-				status.text = status_text;
+				input = appointmentWindow.result;
+				doctor.text = input.doctor.name?'Dr. '+input.doctor.name:'Doctor Unknown';
+				date.text = input.date;
+				status.text = input.complete?input.activities.length+' activities and '+input.treatments.length+' treatments':
+												(isValidDateTime(new Date(input.date+' '+input.time)))?'Scheduled':'Missed';
 			}
 			
+		});
+	});
+	
+	status.addEventListener('click', function() {
+		if(status.text == 'Scheduled' || status.text == 'Missed') return;
+		
+		var prescription = require('ui/common/forms/prescription_form');
+		var actions = {
+			appointment_id: input.id,
+			entry_id: input.entry_id,
+			activities: input.activities,
+			treatments: input.treatments,
+		}
+		prescription = new prescription(actions);
+		prescription.open(); 
+	
+		prescription.addEventListener('close', function() {
+			input.activities = prescription.result.activities;
+			input.treatments = prescription.result.treatments;
+			status.text = input.activities.length+' activities and '+input.treatments.length+' treatments';
+			status.bubbleParent = input.complete?0:1;
 		});
 	});
 

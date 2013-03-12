@@ -13,6 +13,8 @@ function entry_form(input)
 		date: input.date?input.date:timeFormatted(new Date).date,
 		time: input.time?input.time:timeFormatted(new Date).time,
 		goals: input.goals?input.goals:[],
+		activities: input.activities?input.activities:[],
+		treatments: input.treatments?input.treatments:[],
 	}
 	
 	var goals_string='';
@@ -68,11 +70,18 @@ function entry_form(input)
 		}
 		deleteGoalsForEntryLocal(entry.id);
 		entry.goals.splice(0, entry.goals.length);
-		var final_goals = goals_field.value.split(',');
-		for(var i=0;i < final_goals.length; i++) {
-				insertGoalForEntryLocal(entry.id,final_goals[i]);
-				entry.goals.push(final_goals[i]);
+		if(goals_field.value != null) {
+			if(goals_field.value.length > 1) {
+				var final_goals = goals_field.value.split(',');
+				for(var i=0;i < final_goals.length; i++) {
+					if(final_goals[i].length < 2) continue;
+					final_goals[i] = final_goals[i].replace(/^\s\s*/, '');  // Remove Preceding white space
+					insertGoalForEntryLocal(entry.id,final_goals[i]);
+					entry.goals.push(final_goals[i]);
+				}
+			}
 		}
+		
 		entry.main_entry = main_entry.value;
 		entry.location = location.value;
 		navGroupWindow.result = entry;
@@ -82,6 +91,7 @@ function entry_form(input)
 	
 	var table = Ti.UI.createTableView({
 		style: 1,
+		showVerticalScrollIndicator: false,
 		rowHeight: 45,
 	});
 	
@@ -100,7 +110,7 @@ function entry_form(input)
 	var location = Titanium.UI.createTextField({ hintText: 'eg: home', value: entry.location, width: '50%', left: '35%' });
 	sectionLocation.rows[0].add(location);
 	
-	var sectionGoals = Ti.UI.createTableViewSection({ headerTitle: 'Goals' });
+	var sectionGoals = Ti.UI.createTableViewSection({ headerTitle: '*Goals (list using commas)' });
 	sectionGoals.add(Ti.UI.createTableViewRow({ height: 90, selectedBackgroundColor: 'white' }));
 	var goals_field = Titanium.UI.createTextArea({ hintText: 'Seperate each goal by comma', value: goals_string, width: '100%', top: 5, font: { fontSize: 17 }, height: 70, borderRadius: 10 });
 	sectionGoals.rows[0].add(goals_field);
