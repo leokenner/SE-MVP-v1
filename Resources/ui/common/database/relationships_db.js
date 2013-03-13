@@ -13,6 +13,7 @@ function insertRelationshipLocal(child_id,user_id, relation)
 	sql = sql + "'" + user_id + "', "; 	 
 	sql = sql + "'" + relation + "')"; 
 	db.execute(sql); 
+	alert('inserted: '+sql);
 	
 	return db.lastInsertRowId; 
 }
@@ -24,14 +25,14 @@ function updateRelationshipLocal(child_id,user_id, relation)
 	sql = sql + child_id+ "' AND USER_ID='";
 	sql = sql + user_id+ "'"; 
 
-	db.execute(sql); 
+	db.execute(sql);
+	alert('update: '+sql); 
 	 
 }
 
 function getRelationshipLocal(user_id,child_id) 
 { 
 	if(user_id == null || child_id == null) { return; }
-	
 	var sql = "SELECT relation FROM relationships WHERE USER_ID='"+user_id+"' AND CHILD_ID='";
 	sql = sql + child_id + "'";
 	var result = db.execute(sql);

@@ -6,18 +6,7 @@ function initRecordsDBLocal()
 {
 	Ti.include('ui/common/database/database.js');
 	
-	db.execute('CREATE TABLE IF NOT EXISTS record_heads (ID INTEGER PRIMARY KEY AUTOINCREMENT,CHILD_ID TEXT NOT NULL, FOREIGN KEY(CHILD_ID) REFERENCES children (ID))');
 	db.execute('CREATE TABLE IF NOT EXISTS records (ID INTEGER PRIMARY KEY AUTOINCREMENT, CHILD_ID INTERGER NOT NULL, CURRENT INTEGER, CURRENT_TYPE TEXT, LATEST_DATE TEXT, LATEST_TIME TEXT, FOREIGN KEY(CHILD_ID) REFERENCES children (ID))');
-}
-
-
-function newRecordHeadLocal()
-{
-	var sql = "INSERT INTO record_heads (child_id) VALUES (";
-	sql = sql + "'" + Ti.App.Properties.getString('current_child').replace("'","''") + "')";
-	db.execute(sql); 
-	
-	return db.lastInsertRowId;
 }
 
 function insertRecordLocal(child_id, current, latest_date, latest_time, current_type)

@@ -23,7 +23,7 @@ function initDBLocal()
 	initRecordsDBLocal();
 	initEntriesDBLocal();
 	initActivitiesDBLocal();
-	initIncidentsDBLocal();
+	//initIncidentsDBLocal();
 	initAppointmentsDBLocal();
 	initTreatmentsDBLocal();
 	
@@ -34,10 +34,10 @@ function initDBLocal()
 function updateTable() 
 {
 	var sql = [];
-	sql[0] = "DROP TABLE IF EXISTS appointments";
-/*	sql[1] = "DROP TABLE IF EXISTS treatments_symptoms";
-	sql[2] = "DROP TABLE IF EXISTS treatments";
-	sql[3] = "DROP TABLE IF EXISTS appointment_symptoms";
+	sql[0] = "DROP TABLE IF EXISTS record_heads";
+	sql[1] = "DROP TABLE IF EXISTS incidents";
+	sql[2] = "DROP TABLE IF EXISTS incident_symptoms";
+/*	sql[3] = "DROP TABLE IF EXISTS appointment_symptoms";
 	sql[4] = "DROP TABLE IF EXISTS appointment_doctors";
 	sql[5] = "DROP TABLE IF EXISTS appointments";
 	sql[6] = "DROP TABLE IF EXISTS incident_symptoms";

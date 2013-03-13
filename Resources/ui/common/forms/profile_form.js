@@ -46,7 +46,7 @@ function profile(child)
 		//This shows that the relationship was changed for the first time. 
 		//Therefore insert new
 		if(child.relationship.relation.charAt(0) == 'R' && fmember_rel.text.charAt(0) != 'R') {
-			insertRelationshipLocal(child.id,child.relationship.id,fmember_rel.text);
+			var row_id = insertRelationshipLocal(child.id,child.relationship.id,fmember_rel.text);
 		}
 		//If the current value is not the same as the previous value, update
 		else if(child.relationship.relation != fmember_rel.text) {
@@ -73,24 +73,29 @@ function profile(child)
 	});
 	
 	var sectionMain = Ti.UI.createTableViewSection();
-	sectionMain.add(Ti.UI.createTableViewRow({ title: 'Last Name' }));
-	sectionMain.add(Ti.UI.createTableViewRow({ title: 'First Name' }));
-	sectionMain.add(Ti.UI.createTableViewRow({ title: 'Sex' }));
-	sectionMain.add(Ti.UI.createTableViewRow({ title: 'Date of Birth' }));
-	sectionMain.add(Ti.UI.createTableViewRow({ title: 'Diagnosis' }));
+	sectionMain.add(Ti.UI.createTableViewRow());
+	sectionMain.add(Ti.UI.createTableViewRow());
+	sectionMain.add(Ti.UI.createTableViewRow());
+	sectionMain.add(Ti.UI.createTableViewRow());
+	sectionMain.add(Ti.UI.createTableViewRow());
 	
+	var lastName_title = Titanium.UI.createLabel({ text: 'Last Name', left: 15, font: { fontWeight: 'bold', fontSize: 18, }, });
 	var last_name = Ti.UI.createTextField({ hintText: 'Last Name', value: child.last_name, left: '45%', width: '55%' });
+	var firstName_title = Titanium.UI.createLabel({ text: 'First Name', left: 15, font: { fontWeight: 'bold', fontSize: 18, }, });
 	var first_name = Ti.UI.createTextField({ hintText: 'First Name', value: child.first_name, left: '45%', width: '55%' });
+	var sex_title = Titanium.UI.createLabel({ text: 'Sex', left: 15, font: { fontWeight: 'bold', fontSize: 18, }, });
 	var sex = Ti.UI.createLabel({ 
 		text: child.sex?child.sex:'Unknown', 
 		left: '45%', 
 		width: '55%' 
 		});
+	var dateOfBirth_title = Titanium.UI.createLabel({ text: 'Date of Birth', left: 15, font: { fontWeight: 'bold', fontSize: 18, }, });
 	var date_of_birth = Ti.UI.createLabel({ 
 		text: child.date_of_birth?child.date_of_birth:new Date().toDateString().slice(4), 
 		left: '45%', 
 		width: '55%' 
 		});
+	var diagnosis_title = Titanium.UI.createLabel({ text: 'Diagnosis', left: 15, font: { fontWeight: 'bold', fontSize: 18, }, });
 	var diagnosis = Ti.UI.createTextField({ 
 		hintText: 'Enter diagnosis',
 		value: child.diagnosis?child.diagnosis:null,
@@ -98,10 +103,15 @@ function profile(child)
 		width: '55%' 
 		});
 	
+	sectionMain.rows[0].add(lastName_title);
 	sectionMain.rows[0].add(last_name);
+	sectionMain.rows[1].add(firstName_title);
 	sectionMain.rows[1].add(first_name);
+	sectionMain.rows[2].add(sex_title);
 	sectionMain.rows[2].add(sex);
+	sectionMain.rows[3].add(dateOfBirth_title);
 	sectionMain.rows[3].add(date_of_birth);
+	sectionMain.rows[4].add(diagnosis_title);
 	sectionMain.rows[4].add(diagnosis);
 	
 	
@@ -114,7 +124,7 @@ function profile(child)
 	sectionFamily.rows[0].add(fmember_name);
 	sectionFamily.rows[0].add(fmember_rel);
 	
-	var sectionDelete = Ti.UI.createTableViewSection();
+/*	var sectionDelete = Ti.UI.createTableViewSection();
 	sectionDelete.add(Ti.UI.createTableViewRow({ backgroundColor: 'red' }));
 	var delete_txt = Ti.UI.createLabel({ 
 		text: 'Delete Child Profile', 
@@ -122,9 +132,9 @@ function profile(child)
 		font: {fontSize: 20, fontWeight: 'bold' },
 		color: 'white' 
 	});
-	sectionDelete.rows[0].add(delete_txt);
+	sectionDelete.rows[0].add(delete_txt);  */
 	
-	table.data = [sectionMain,sectionFamily,sectionDelete];
+	table.data = [sectionMain,sectionFamily];
 	
 	win.add(table);
 	

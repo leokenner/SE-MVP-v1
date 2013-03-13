@@ -9,7 +9,7 @@ function initUsersDBLocal()
 function insertUserLocal(cloud_id,first_name, last_name) 
 { 	
 	var sql = "INSERT INTO users (cloud_id, first_name, last_name) VALUES ("; 
-	sql = sql + "'" + cloud_id + "', ";
+	sql = sql + "" + cloud_id + ", ";
 	sql = sql + "'" + first_name.replace("'", "''") + "', "; 	 
 	sql = sql + "'" + last_name.replace("'", "''") + "')"; 
 	db.execute(sql); 

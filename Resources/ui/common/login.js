@@ -5,7 +5,7 @@ function login()
 	Ti.include('ui/common/database/database.js');
 	
 	initDBLocal();
-	//var parent_id = insertUser(null, 'Adarsh', 'Hasija');
+	//var parent_id = insertUserLocal(null, 'Adarsh', 'Hasija');
 	var parent_id = getAllUsersLocal();
 	Ti.App.Properties.setString('parent', parent_id[0].id);
 	

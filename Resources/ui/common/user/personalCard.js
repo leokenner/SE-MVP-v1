@@ -13,7 +13,7 @@ function personalCard() {
 		var user = getUserLocal(child.user_id);
 		user = user[0];
 		
-		var relation = getRelationshipLocal(Titanium.App.Properties.getString('user'), Titanium.App.Properties.getString('child'));
+		var relation = getRelationshipLocal(user.id, child.id);
 		var relationship = {
 			id: user.id,
 			name: user.first_name+' '+user.last_name,
@@ -28,19 +28,6 @@ function personalCard() {
 		age.text = calculated_age;
 		diagnosis.text = child.diagnosis?child.diagnosis:'Unknown';
 	}
-
-/*	var child = getChildLocal(Titanium.App.Properties.getString('child'));
-	child = child[0];
-	var user = getUserLocal(child.user_id);
-	user = user[0];
-	
-	var relationship = getRelationshipLocal(Titanium.App.Properties.getString('user'), Titanium.App.Properties.getString('child'));
-	relationship = {
-		id: user.id,
-		name: user.first_name+' '+user.last_name,
-		relation: relationship?relationship:'Relation Unknow: Tap to change',
-	}
-	child.relationship = relationship; */
 	
 	var table = Ti.UI.createTableView({
 		backgroundColor: 'white',
@@ -87,26 +74,19 @@ function personalCard() {
 	table.appendRow(Ti.UI.createTableViewRow({ title: 'Diagnosis' }));
 	
 	var name = Ti.UI.createLabel({ 
-						//text: child.first_name+' '+child.last_name, 
 						left: '45%', 
 						width: '55%' 
 						});
 	var sex = Ti.UI.createLabel({ 
-						//text: child.sex?child.sex:'Unknown',
 						left: '45%', 
 						width: '55%' 
 						});
 						
-	//var calculated_age = child.date_of_birth?calculateAge(new Date(child.date_of_birth),new Date()):'Unknown';
-	
-						
 	var age = Ti.UI.createLabel({ 
-						//text: calculated_age, 
 						left: '45%', 
 						width: '55%' 
 						});
 	var diagnosis = Ti.UI.createLabel({ 
-						//text: child.diagnosis?child.diagnosis:'Unknown',
 						left: '45%', 
 						width: '55%' 
 						});
