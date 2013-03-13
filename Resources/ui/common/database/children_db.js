@@ -66,6 +66,28 @@ function getChildLocal(id) {
 	return results;
 }
 
+function getChildByNameLocal(first_name, last_name) { 
+	var sql = "SELECT * FROM children WHERE FIRST_NAME='"+first_name+"' AND LAST_NAME='"+last_name+"'";
+	
+	var results = [];
+	var resultSet = db.execute(sql);
+    while (resultSet.isValidRow()) {
+			results.push({
+		      id: resultSet.fieldByName('id'),
+		      user_id: resultSet.fieldByName('user_id'),
+		   	  first_name: resultSet.fieldByName('first_name'),
+		   	  last_name: resultSet.fieldByName('last_name'),
+		   	  sex: resultSet.fieldByName('sex'),
+		   	  date_of_birth: resultSet.fieldByName('date_of_birth'),
+		   	  diagnosis: resultSet.fieldByName('diagnosis'),
+	        });
+	resultSet.next();
+    }
+    resultSet.close();		
+
+	return results;
+}
+
 
 function updateChildLocal(id,first_name,last_name,sex,date_of_birth,diagnosis)
 {

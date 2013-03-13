@@ -25,7 +25,7 @@ function entry_form(input)
 	
 		
 	var win = Ti.UI.createWindow({
-		title: 'Incident',
+		title: 'Entry',
 		backgroundColor: 'white'
 	});
 	win.hideTabBar();
@@ -67,6 +67,7 @@ function entry_form(input)
 		}
 		else {
 			updateEntryLocal(entry.id,main_entry.value,entry.date,location.value);
+			updateRecordTimesForEntryLocal(entry.id, timeFormatted(new Date()).date, timeFormatted(new Date()).time);
 		}
 		deleteGoalsForEntryLocal(entry.id);
 		entry.goals.splice(0, entry.goals.length);
@@ -80,7 +81,7 @@ function entry_form(input)
 					entry.goals.push(final_goals[i]);
 				}
 			}
-		}
+		}	
 		
 		entry.main_entry = main_entry.value;
 		entry.location = location.value;

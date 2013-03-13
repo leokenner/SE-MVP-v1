@@ -6,14 +6,10 @@ function completeRecordsTableView()
 	
 	function loadTable()
 	{
+		var records_length = sectionRecords.rowCount;
+		for(var i=records_length-1 ; i > -1; i--) table.deleteRow(i);
+		
 		var records = getRecordsForChildLocal(child.id);
-		records.sort(function(a,b){
-			a = new Date(a.date+' '+a.time); 
-  			b = new Date(b.date+' '+b.time);
-  			if(a > b) return -1;   //Ordered by date and time, newest first
-  			if(a < b) return 1;
-			return 0;
-		});	
 
 		for(var i=0;i<records.length;i++) {
 			if(records[i].current_type == 'entry') {
@@ -76,7 +72,7 @@ function completeRecordsTableView()
 	var sectionRecords = Ti.UI.createTableViewSection();
 	var sectionPersonal = Ti.UI.createTableViewSection();
 	sectionPersonal.add(Ti.UI.createTableViewRow());
-	sectionPersonal.add(Ti.UI.createTableViewRow({ height: 50 }));
+	sectionPersonal.add(Ti.UI.createTableViewRow({ height: 70 }));
 	sectionPersonal.rows[0].add(personalCardView);
 	sectionPersonal.rows[0].setHeight(personalCardView.height+40);
 	table.data = [sectionRecords, sectionPersonal];
@@ -100,7 +96,7 @@ function completeRecordsTableView()
 		table.scrollToIndex(sectionRecords.rowCount);
 	});
 	
-	//This changes the child name label if the profile change event is triggered by profile
+	//This changes the child name label if the child name is changed using the form
 	Ti.App.addEventListener('profileChanged', function() {
 		child = getChildLocal(Titanium.App.Properties.getString('child'));
 		child = child[0];
@@ -128,7 +124,9 @@ function completeRecordsTableView()
 					row.setHeight(view.height+40);
 				});
 				
-				sectionRecords.unshift(row);
+				var temp_rows = sectionRecords.rows;
+				temp_rows.unshift(row);
+				sectionRecords.rows = temp_rows;
 				table.data = [sectionRecords, sectionPersonal];
 				table.scrollToIndex(0);
 			}
@@ -137,10 +135,13 @@ function completeRecordsTableView()
 	
 	loadTable();
 	
+	//This is triggered if the user is changed from the side menu
 	Ti.App.addEventListener('changeUser', function() {
+		child = getChildLocal(Titanium.App.Properties.getString('child'));
+		child = child[0];
+		childName_btn.text = child.first_name + ' '+ child.last_name;
 		loadTable();
 	});
-	
 	
 	
 	

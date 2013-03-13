@@ -116,7 +116,7 @@ function appointment(input)
 			}
 			
 			updateAppointmentCompleteStatus(appointment.id,complete_switcher.value);
-			updateRecordTimesForIncidentLocal(appointment.incident_id,timeFormatted(new Date()).date,timeFormatted(new Date()).time);
+			updateRecordTimesForEntryLocal(appointment.entry_id,timeFormatted(new Date()).date,timeFormatted(new Date()).time);
 			
 			appointment.doctor.name = name.value;
 			appointment.doctor.location = location.value;

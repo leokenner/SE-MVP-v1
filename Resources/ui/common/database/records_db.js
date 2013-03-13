@@ -47,7 +47,7 @@ function updateRecordLocal(record_id, current, current_type, latest_date, latest
 	return db.lastInsertRowId; 
 }
 
-function updateRecordTimesForIncidentLocal(current, latest_date, latest_time) 
+function updateRecordTimesForEntryLocal(current, latest_date, latest_time) 
 { 
 	var sql = "UPDATE records SET ";
 	sql = sql + "LATEST_DATE='"+latest_date.replace("'","''")+"', ";
@@ -62,7 +62,7 @@ function updateRecordTimesForIncidentLocal(current, latest_date, latest_time)
 
 function getRecordsForChildLocal(child_id) 
 { 
-	var sql = "SELECT * FROM records WHERE CHILD_ID='"+child_id+"' ORDER BY latest_date DESC";  //Order by most recent first 
+	var sql = "SELECT * FROM records WHERE CHILD_ID='"+child_id+"' ORDER BY latest_date, latest_time DESC";  //Order by most recent first 
 	
 	var results = [];
 	var resultSet = db.execute(sql);

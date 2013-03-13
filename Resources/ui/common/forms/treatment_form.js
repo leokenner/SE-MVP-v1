@@ -128,7 +128,7 @@ save_btn.addEventListener('click', function() {
 			
 			updateTreatmentSuccessStatus(treatment.id,successful_switcher.value);
 			//var record_incident_id = getAppointmentLocal(treatment.appointment_id)[0].incident_id;
-			updateRecordTimesForIncidentLocal(treatment.entry_id,timeFormatted(new Date()).date,timeFormatted(new Date()).time);
+			updateRecordTimesForEntryLocal(treatment.entry_id,timeFormatted(new Date()).date,timeFormatted(new Date()).time);
 			
 			treatment.medication = medication.value;
 			treatment.dosage = dosage.value;

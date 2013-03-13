@@ -103,7 +103,7 @@ save_btn.addEventListener('click', function() {
 		
 		updateActivitySuccessStatus(activity.id,successful_switcher.value);
 		if(endNotes_field.value != null || endNotes_field.value.length > 1) updateActivityEndNotes(activity.id,endNotes_field.value);
-		updateRecordTimesForIncidentLocal(activity.entry_id,timeFormatted(new Date()).date,timeFormatted(new Date()).time);
+		updateRecordTimesForEntryLocal(activity.entry_id,timeFormatted(new Date()).date,timeFormatted(new Date()).time);
 		
 		activity.main_activity = activity_field.value;
 		activity.frequency = frequency.text;

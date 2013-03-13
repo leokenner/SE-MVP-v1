@@ -28,12 +28,12 @@ function updateRelationshipLocal(child_id,user_id, relation)
 	 
 }
 
-function getRelationshipLocal(child_id,user_id) 
+function getRelationshipLocal(user_id,child_id) 
 { 
-	if(child_id == null || user_id == null) { return; }
+	if(user_id == null || child_id == null) { return; }
 	
-	var sql = "SELECT relation FROM relationships WHERE CHILD_ID='"+child_id+"' AND USER_ID='";
-	sql = sql + user_id + "'";
+	var sql = "SELECT relation FROM relationships WHERE USER_ID='"+user_id+"' AND CHILD_ID='";
+	sql = sql + child_id + "'";
 	var result = db.execute(sql);
 	result = result.fieldByName('relation');
 	

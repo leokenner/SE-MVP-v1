@@ -51,12 +51,16 @@ function insertChildren()
     		var child = children[i];		
     		tableViewRow[i] = Ti.UI.createTableViewRow();	
         	tableViewRow[i].title = child.first_name+' '+child.last_name;
-        	tableViewRow[i].addEventListener('click', function() { Ti.App.fireEvent('changeUser'); })      	
+        	tableViewRow[i].child_id = child.id;
+        	tableViewRow[i].addEventListener('click', function(e) {
+        		Titanium.App.Properties.setString('child', e.rowData.child_id); 
+        		Ti.App.fireEvent('changeUser'); 
+        		});      	
             sectionChildren.add(tableViewRow[i]); 
         }
-        var row = Ti.UI.createTableViewRow({ title: 'Create New Child', hasChild: true });
+        var row = Ti.UI.createTableViewRow({ title: 'Create New Child' });
         row.addEventListener('click', function() {
-        	var row_id = insertChild('New', 'Child');
+        	var row_id = insertChildLocal('New','Child',null,null,null);
         	Titanium.App.Properties.setString('child', row_id);
         	Ti.App.fireEvent('changeUser');
         });
@@ -65,7 +69,7 @@ function insertChildren()
 }
 
 	
-sectionChildren.addEventListener('click', function() {
+sectionChildren.addEventListener('click', function(e) {
 	/*	// Create a new child and return
 		if(e.row.title == 'Create New Child') 
 		{

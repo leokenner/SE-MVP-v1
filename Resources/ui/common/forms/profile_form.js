@@ -42,20 +42,25 @@ function profile(child)
 		
 	if(fname && lname) {
 		updateChildLocal(child.id,first_name.value,last_name.value,sex.text,date_of_birth.text,diagnosis.value);
-		if(fmember_rel.text.charAt(0) != 'U') {
-			if(!updateRelationshipLocal(child.id,child.relationship.id,fmember_rel.text)) {
-				insertRelationshipLocal(child.id,child.relationship.id,fmember_rel.text);
-			} 
-			child.relationship.relation = fmember_rel.text;
+		//Prev relation was unknown. New relation is known. 
+		//This shows that the relationship was changed for the first time. 
+		//Therefore insert new
+		if(child.relationship.relation.charAt(0) == 'R' && fmember_rel.text.charAt(0) != 'R') {
+			insertRelationshipLocal(child.id,child.relationship.id,fmember_rel.text);
 		}
-		navGroupWindow.result = { 
-			first_name : first_name.value,
-			last_name : last_name.value,
-			sex : sex.text,
-			date_of_birth: date_of_birth.text,
-			diagnosis: diagnosis.value,
-			relationship: child.relationship,
+		//If the current value is not the same as the previous value, update
+		else if(child.relationship.relation != fmember_rel.text) {
+			updateRelationshipLocal(child.id,child.relationship.id,fmember_rel.text);
 		}
+ 
+		child.first_name = first_name.value,
+		child.last_name = last_name.value,
+		child.sex = sex.text,
+		child.date_of_birth = date_of_birth.text,
+		child.diagnosis = diagnosis.value,
+		child.relationship.relation = fmember_rel.text,
+		
+		navGroupWindow.result = child;
 		Ti.App.fireEvent('profileChanged');
 		navGroupWindow.close();
 	}	
