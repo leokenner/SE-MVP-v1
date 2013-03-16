@@ -4,8 +4,9 @@
 function leftMenu()
 {
 	Ti.include('ui/common/database/database.js');
+	Ti.include('ui/common/login_logout.js');
 	
-	var users = getAllUsersLocal();
+	var users = getUserLocal(Titanium.App.Properties.getString('user'));
 	var parent = {
 		id: users[0].id,
 		first_name: users[0].first_name,
@@ -34,7 +35,8 @@ function leftMenu()
 	
 	var sectionChildren = Ti.UI.createTableViewSection({ headerTitle: 'Children' });	
 	var sectionOther = Ti.UI.createTableViewSection({ headerTitle: ' ' });
-	sectionOther.add(Ti.UI.createTableViewRow({ title: 'Logout' }));
+	var logout_row = Ti.UI.createTableViewRow({ title: 'Logout' });
+	sectionOther.add(logout_row);
 	leftMenu_table.data = [sectionChildren, sectionOther];
 	window.add(leftMenu_table);
 	
@@ -60,7 +62,7 @@ function insertChildren()
         }
         var row = Ti.UI.createTableViewRow({ title: 'Create New Child' });
         row.addEventListener('click', function() {
-        	var row_id = insertChildLocal('New','Child',null,null,null);
+        	var row_id = insertChildLocal(Titanium.App.Properties.getString('user'), 'New','Child',null,null,null);
         	Titanium.App.Properties.setString('child', row_id);
         	Ti.App.fireEvent('changeUser');
         });
@@ -68,16 +70,10 @@ function insertChildren()
         leftMenu_table.data = [sectionChildren,sectionOther];
 }
 
-	
-sectionChildren.addEventListener('click', function(e) {
-	/*	// Create a new child and return
-		if(e.row.title == 'Create New Child') 
-		{
-			var row_id = insertChild('New', 'Child');
-			insertChildren();
-			Titanium.App.Properties.setString('child', row_id);
-		}	*/			
+logout_row.addEventListener('click', function() {
+	logout();
 });
+
 
 Ti.App.addEventListener('showMenu', function() {
 		insertChildren();
