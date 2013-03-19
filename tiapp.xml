@@ -44,7 +44,7 @@
         <theme>default</theme>
     </mobileweb>
     <modules>
-        <module platform="commonjs">ti.cloud</module>
+        <module platform="commonjs" version="2.3.1">ti.cloud</module>
     </modules>
     <deployment-targets>
         <target device="blackberry">false</target>
@@ -53,5 +53,5 @@
         <target device="iphone">true</target>
         <target device="mobileweb">true</target>
     </deployment-targets>
-    <sdk-version>3.0.0.GA</sdk-version>
+    <sdk-version>3.0.2.GA</sdk-version>
 </ti:app>

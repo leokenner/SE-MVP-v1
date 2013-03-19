@@ -18,6 +18,16 @@ function insertUserLocal(cloud_id,first_name, last_name)
 	
 }
 
+function updateUserLocal(id, first_name, last_name, email)
+{
+	var sql = "UPDATE users SET FIRST_NAME='"+first_name.replace("'", "''");    
+	sql = sql + "', LAST_NAME='"+last_name.replace("'","''");
+	sql = sql + "', EMAIL='"+email;
+	sql = sql + "' WHERE ID='"+id+"'";
+	
+	db.execute(sql);
+}
+
 function getAllUsersLocal() {
 	var sql = "SELECT * FROM users";
 	
@@ -26,6 +36,7 @@ function getAllUsersLocal() {
     while (resultSet.isValidRow()) {
 			results.push({
 		      id: resultSet.fieldByName('id'),
+		      cloud_id: resultSet.fieldByName('cloud_id'),
 		   	  first_name: resultSet.fieldByName('first_name'),
 		   	  last_name: resultSet.fieldByName('last_name'),
 		   	  email: resultSet.fieldByName('email'),
@@ -46,6 +57,7 @@ function getUserLocal(id) {
     while (resultSet.isValidRow()) {
 			results.push({
 		      id: resultSet.fieldByName('id'),
+		      cloud_id: resultSet.fieldByName('cloud_id'),
 		   	  first_name: resultSet.fieldByName('first_name'),
 		   	  last_name: resultSet.fieldByName('last_name'),
 		   	  email: resultSet.fieldByName('email'),
@@ -55,4 +67,10 @@ function getUserLocal(id) {
     resultSet.close();		
 
 	return results;
+}
+
+function deleteUserLocal(cloud_id)
+{
+	var sql = "DELETE FROM users WHERE CLOUD_ID='"+cloud_id+ "'";
+	db.execute(sql);
 }

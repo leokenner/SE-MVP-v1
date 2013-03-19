@@ -124,16 +124,6 @@ function profile(child)
 	sectionFamily.rows[0].add(fmember_name);
 	sectionFamily.rows[0].add(fmember_rel);
 	
-/*	var sectionDelete = Ti.UI.createTableViewSection();
-	sectionDelete.add(Ti.UI.createTableViewRow({ backgroundColor: 'red' }));
-	var delete_txt = Ti.UI.createLabel({ 
-		text: 'Delete Child Profile', 
-		textAlign: 'center', 
-		font: {fontSize: 20, fontWeight: 'bold' },
-		color: 'white' 
-	});
-	sectionDelete.rows[0].add(delete_txt);  */
-	
 	table.data = [sectionMain,sectionFamily];
 	
 	win.add(table);

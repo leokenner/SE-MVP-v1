@@ -16,7 +16,7 @@ if (Ti.version < 1.8 ) {
 
 // This is a single context application with multiple windows in a stack
 (function() {
-	Ti.include('ui/common/login.js');
+	Ti.include('ui/common/login_logout.js');
 	
 	//render appropriate components based on the platform and form factor
 	var osname = Ti.Platform.osname,
@@ -29,6 +29,7 @@ if (Ti.version < 1.8 ) {
 	var isTablet = osname === 'ipad' || (osname === 'android' && (width > 899 || height > 899));
 	
 	var mainWindow;
+	var mainCover = require('ui/mainCover');
 	var leftWindow = require('ui/common/menus/leftMenu');
 	var rightWindow = require('ui/common/menus/rightMenu');
 	var tabGroup = require('ui/handheld/ApplicationTabGroup');
@@ -46,11 +47,21 @@ if (Ti.version < 1.8 ) {
 		}
 	}
 	
-	login();
+	mainCover = new mainCover();
+	mainCover.open();
 	
-	leftWindow = new leftWindow();
-	leftWindow.open();
-	new tabGroup(new mainWindow()).open();
+	Ti.App.addEventListener('userLoggedIn', function() {
+		loadDatabase();
+		//leftWindow = new leftWindow();
+		//leftWindow.open();
+		//new tabGroup(new mainWindow()).open();
+	});
+	
+	Ti.App.addEventListener('databaseLoaded', function() {
+		leftWindow = new leftWindow();
+		leftWindow.open();
+		new tabGroup(new mainWindow()).open();
+	}); 
 	
 
 })();

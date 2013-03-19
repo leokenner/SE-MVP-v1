@@ -63,6 +63,7 @@ function insertChildren()
         var row = Ti.UI.createTableViewRow({ title: 'Create New Child' });
         row.addEventListener('click', function() {
         	var row_id = insertChildLocal(Titanium.App.Properties.getString('user'), 'New','Child',null,null,null);
+        	createObjectACS('children', { id: row_id, user_id: Titanium.App.Properties.getString('user'), first_name: 'New', last_name: 'Child' });
         	Titanium.App.Properties.setString('child', row_id);
         	Ti.App.fireEvent('changeUser');
         });

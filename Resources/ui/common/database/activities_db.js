@@ -5,7 +5,7 @@ function initActivitiesDBLocal()
 {
 	Ti.include('ui/common/database/database.js');
 	
-	db.execute('CREATE TABLE IF NOT EXISTS activities (ID INTEGER PRIMARY KEY AUTOINCREMENT, ENTRY_ID INTEGER, APPOINTMENT_ID INTEGER, MAIN_ACTIVITY TEXT NOT NULL, START_DATE TEXT NOT NULL, END_DATE TEXT NOT NULL, FREQUENCY TEXT, LOCATION TEXT, SUCCESSFUL INTEGER, END_NOTES TEXT, FOREIGN KEY(ENTRY_ID) REFERENCES entries (ID), FOREIGN KEY(APPOINTMENT_ID) REFERENCES appointments (ID))');
+	db.execute('CREATE TABLE IF NOT EXISTS activities (ID INTEGER PRIMARY KEY AUTOINCREMENT, CLOUD_ID TEXT, ENTRY_ID INTEGER, APPOINTMENT_ID INTEGER, MAIN_ACTIVITY TEXT NOT NULL, START_DATE TEXT NOT NULL, END_DATE TEXT NOT NULL, FREQUENCY TEXT, LOCATION TEXT, SUCCESSFUL INTEGER, END_NOTES TEXT, FOREIGN KEY(ENTRY_ID) REFERENCES entries (ID), FOREIGN KEY(APPOINTMENT_ID) REFERENCES appointments (ID))');
 	db.execute('CREATE TABLE IF NOT EXISTS activity_goals (ACTIVITY_ID INTEGER NOT NULL, GOAL TEXT NOT NULL, FOREIGN KEY(ACTIVITY_ID) REFERENCES activities (ID))');
 }
 
@@ -24,6 +24,14 @@ function insertActivityLocal(entry_id, appointment_id, main_activity, start_date
 	db.execute(sql); 
 	
 	return db.lastInsertRowId; 
+}
+
+function updateActivityCloudIdLocal(activity_id, cloud_id)
+{
+	var sql = "UPDATE activities SET CLOUD_ID='"+cloud_id+"' ";
+	sql = sql + "WHERE ID='"+activity_id+"'"; 
+	
+	db.execute(sql); 
 }
 
 
@@ -46,6 +54,7 @@ function getAllActivitiesLocal()
     while (resultSet.isValidRow()) {
 			results.push({
 			  id: resultSet.fieldByName('id'),
+			  cloud_id: resultSet.fieldByName('cloud_id'),
 			  entry_id: resultSet.fieldByName('entry_id'),
 			  appointment_id: resultSet.fieldByName('appointment_id'),
 		   	  main_activity: resultSet.fieldByName('main_activity'),
@@ -72,6 +81,7 @@ function getActivitiesForEntryLocal(entry_id)
     while (resultSet.isValidRow()) {
 			results.push({
 			  id: resultSet.fieldByName('id'),
+			  cloud_id: resultSet.fieldByName('cloud_id'),
 			  entry_id: resultSet.fieldByName('entry_id'),
 			  appointment_id: resultSet.fieldByName('appointment_id'),
 		   	  main_activity: resultSet.fieldByName('main_activity'),
@@ -99,6 +109,7 @@ function getActivitiesForAppointmentLocal(appointment_id)
     while (resultSet.isValidRow()) {
 			results.push({
 			  id: resultSet.fieldByName('id'),
+			  cloud_id: resultSet.fieldByName('cloud_id'),
 			  entry_id: resultSet.fieldByName('entry_id'),
 			  appointment_id: resultSet.fieldByName('appointment_id'),
 		   	  main_activity: resultSet.fieldByName('main_activity'),
@@ -126,6 +137,7 @@ function getActivityLocal(activity_id)
     while (resultSet.isValidRow()) {
 			results.push({
 			  id: resultSet.fieldByName('id'),
+			  cloud_id: resultSet.fieldByName('cloud_id'),
 			  entry_id: resultSet.fieldByName('entry_id'),
 			  appointment_id: resultSet.fieldByName('appointment_id'),
 		   	  main_activity: resultSet.fieldByName('main_activity'),
@@ -211,5 +223,19 @@ function deleteActivityLocal(activity_id)
 function deleteGoalsForActivityLocal(activity_id)
 {
 	var sql = "DELETE FROM activity_goals WHERE ACTIVITY_ID = '"+activity_id+"'";
+	db.execute(sql);
+}
+
+function deleteAllActivities()
+{
+	deleteAllActivityGoals();
+	
+	var sql = "DELETE FROM activities";
+	db.execute(sql);
+}
+
+function deleteAllActivityGoals()
+{
+	var sql = "DELETE FROM activity_goals";
 	db.execute(sql);
 }

@@ -13,7 +13,6 @@ function insertRelationshipLocal(child_id,user_id, relation)
 	sql = sql + "'" + user_id + "', "; 	 
 	sql = sql + "'" + relation + "')"; 
 	db.execute(sql); 
-	alert('inserted: '+sql);
 	
 	return db.lastInsertRowId; 
 }
@@ -57,4 +56,10 @@ function getRelationsToChildLocal(child_id)
     resultSet.close();		
 
 	return results;
+}
+
+function deleteRelationshipsToUser(user_id)
+{
+	var sql = "DELETE FROM relationships WHERE USER_ID='"+user_id+ "'";
+	db.execute(sql);
 }

@@ -95,6 +95,9 @@ function appointment(input)
 				var entry_id = '"'+appointment.entry_id+'"';
 				appointment.id = insertAppointmentLocal(entry_id,appointment.date,appointment.time,diagnosis.value);
 				appointment.doctor.id = insertDoctorForAppointmentLocal(appointment.id,name.value,location.value,street.value,city.value,state.value,zip.value,country.value);
+			
+				createObjectACS('appointments', { id: appointment.id, entry_id: appointment.entry_id, 
+													date: appointment.date, time: appointment.time, complete: complete_switcher.value, diagnosis: diagnosis.value, });
 			}
 			else {
 				updateAppointmentLocal(appointment.id,appointment.date,appointment.time,diagnosis.value);

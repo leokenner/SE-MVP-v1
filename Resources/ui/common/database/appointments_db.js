@@ -5,7 +5,7 @@ function initAppointmentsDBLocal()
 {
 	Ti.include('ui/common/database/database.js');
 	
-	db.execute('CREATE TABLE IF NOT EXISTS appointments (ID INTEGER PRIMARY KEY AUTOINCREMENT, ENTRY_ID INTEGER NOT NULL, DATE TEXT NOT NULL, TIME TEXT NOT NULL, COMPLETE INTEGER, DIAGNOSIS TEXT, FOREIGN KEY(ENTRY_ID) REFERENCES entries (ID))');
+	db.execute('CREATE TABLE IF NOT EXISTS appointments (ID INTEGER PRIMARY KEY AUTOINCREMENT, CLOUD_ID TEXT, ENTRY_ID INTEGER NOT NULL, DATE TEXT NOT NULL, TIME TEXT NOT NULL, COMPLETE INTEGER, DIAGNOSIS TEXT, FOREIGN KEY(ENTRY_ID) REFERENCES entries (ID))');
 	db.execute('CREATE TABLE IF NOT EXISTS appointment_doctors (APPOINTMENT_ID INTEGER NOT NULL, NAME TEXT, LOCATION TEXT, STREET TEXT, CITY TEXT, STATE TEXT, ZIP INTEGER, COUNTRY TEXT, FOREIGN KEY(APPOINTMENT_ID) REFERENCES appointments (ID))');
 	db.execute('CREATE TABLE IF NOT EXISTS appointment_symptoms (APPOINTMENT_ID INTEGER NOT NULL, SYMPTOM TEXT NOT NULL, FOREIGN KEY(APPOINTMENT_ID) REFERENCES appointments (ID))');
 
@@ -22,6 +22,14 @@ function insertAppointmentLocal(entry_id,date, time, diagnosis)
 	db.execute(sql); 
 	
 	return db.lastInsertRowId; 
+}
+
+function updateAppointmentCloudIdLocal(appointment_id, cloud_id)
+{
+	var sql = "UPDATE appointments SET CLOUD_ID='"+cloud_id+"' ";
+	sql = sql + "WHERE ID='"+appointment_id+"'"; 
+	
+	db.execute(sql); 
 }
 
 
@@ -65,6 +73,7 @@ function getAllAppointmentsLocal()
     while (resultSet.isValidRow()) {
 			results.push({
 			  id: resultSet.fieldByName('id'),
+			  cloud_id: resultSet.fieldByName('cloud_id'),
 			  entry_id: resultSet.fieldByName('entry_id'),
 		   	  diagnosis: resultSet.fieldByName('diagnosis'),
 		   	  complete: resultSet.fieldByName('complete'),
@@ -88,6 +97,31 @@ function getAppointmentsForEntryLocal(entry_id)
     while (resultSet.isValidRow()) {
 			results.push({
 			  id: resultSet.fieldByName('id'),
+			  cloud_id: resultSet.fieldByName('cloud_id'),
+			  entry_id: resultSet.fieldByName('entry_id'),
+		   	  diagnosis: resultSet.fieldByName('diagnosis'),
+		   	  complete: resultSet.fieldByName('complete'),
+		   	  date: resultSet.fieldByName('date'),
+		   	  time: resultSet.fieldByName('time'),
+	        });
+	resultSet.next();
+    }
+    resultSet.close();		
+
+	return results;
+}
+
+
+function getAppointmentByCloudIdLocal(cloud_id) 
+{ 
+	var sql = "SELECT * FROM appointments WHERE CLOUD_ID='"+cloud_id+"'"; 
+	
+	var results = [];
+	var resultSet = db.execute(sql);
+    while (resultSet.isValidRow()) {
+			results.push({
+			  id: resultSet.fieldByName('id'),
+			  cloud_id: resultSet.fieldByName('cloud_id'),
 			  entry_id: resultSet.fieldByName('entry_id'),
 		   	  diagnosis: resultSet.fieldByName('diagnosis'),
 		   	  complete: resultSet.fieldByName('complete'),
@@ -112,6 +146,7 @@ function getAppointmentLocal(appointment_id)
     while (resultSet.isValidRow()) {
 			results.push({
 			  id: resultSet.fieldByName('id'),
+			  cloud_id: resultSet.fieldByName('cloud_id'),
 			  entry_id: resultSet.fieldByName('entry_id'),
 		   	  diagnosis: resultSet.fieldByName('diagnosis'),
 		   	  complete: resultSet.fieldByName('complete'),
@@ -233,5 +268,26 @@ function deleteDoctorForAppointmentLocal(appointment_id)
 function deleteSymptomsForAppointmentLocal(appointment_id)
 {
 	var sql = "DELETE FROM appointment_symptoms WHERE APPOINTMENT_ID = '"+appointment_id+"'";
+	db.execute(sql);
+}
+
+function deleteAllAppointments()
+{
+	deleteAllAppointmentDoctors();
+	deleteAllAppointmentSymptoms();
+	
+	var sql = "DELETE FROM appointments";
+	db.execute(sql);
+}
+
+function deleteAllAppointmentDoctors()
+{
+	var sql = "DELETE FROM appointment_doctors";
+	db.execute(sql);
+}
+
+function deleteAllAppointmentSymptoms()
+{
+	var sql = "DELETE FROM appointment_symptoms";
 	db.execute(sql);
 }

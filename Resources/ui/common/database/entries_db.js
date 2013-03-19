@@ -7,8 +7,8 @@ function initEntriesDBLocal()
 {
 	Ti.include('ui/common/database/database.js');
 	
-	db.execute('CREATE TABLE IF NOT EXISTS entries (ID INTEGER PRIMARY KEY AUTOINCREMENT,RECORD_ID INTEGER NOT NULL, MAIN_ENTRY TEXT NOT NULL, DATE TEXT, LOCATION TEXT, FOREIGN KEY(RECORD_ID) REFERENCES records (ID))');
-	db.execute('CREATE TABLE IF NOT EXISTS entry_goals (ENTRY_ID INTEGER NOT NULL, GOAL TEXT NOT NULL, FOREIGN KEY(ENTRY_ID) REFERENCES entries (ID))');
+	db.execute('CREATE TABLE IF NOT EXISTS entries (ID INTEGER PRIMARY KEY AUTOINCREMENT,CLOUD_ID TEXT, RECORD_ID INTEGER NOT NULL, MAIN_ENTRY TEXT NOT NULL, DATE TEXT, LOCATION TEXT, FOREIGN KEY(RECORD_ID) REFERENCES records (ID))');
+	
 
 }
 
@@ -25,19 +25,13 @@ function insertEntryLocal(record_id, main_entry, date, location)
 	return db.lastInsertRowId; 
 }
 
-
-function insertGoalForEntryLocal(entry_id, goal)
+function updateEntryCloudIdLocal(entry_id, cloud_id)
 {
-	var sql = "INSERT INTO entry_goals (entry_id, goal) VALUES (";
-	sql = sql + "'" + entry_id + "', ";
-	sql = sql + "'" + goal.replace("'", "''") + "')"; 
-	db.execute(sql); 
+	var sql = "UPDATE entries SET CLOUD_ID='"+cloud_id+"' ";
+	sql = sql + "WHERE ID='"+entry_id+"'"; 
 	
-	return db.lastInsertRowId;
+	db.execute(sql); 
 }
-
-
-
 
 
 
@@ -50,6 +44,7 @@ function getAllEntriesLocal()
     while (resultSet.isValidRow()) {
 			results.push({
 			  id: resultSet.fieldByName('id'),
+			  cloud_id: resultSet.fieldByName('cloud_id'),
 			  record_id: resultSet.fieldByName('record_id'),
 		   	  main_entry: resultSet.fieldByName('main_entry'),
 		   	  date: resultSet.fieldByName('date'),
@@ -72,6 +67,7 @@ function getEntryLocal(entry_id)
     while (resultSet.isValidRow()) {
 			results.push({
 			  id: resultSet.fieldByName('id'),
+			  cloud_id: resultSet.fieldByName('cloud_id'),
 			  record_id: resultSet.fieldByName('record_id'),
 		   	  main_entry: resultSet.fieldByName('main_entry'),
 		   	  date: resultSet.fieldByName('date'),
@@ -84,24 +80,27 @@ function getEntryLocal(entry_id)
 	return results;
 }
 
-
-function getGoalsOfEntryLocal(entry_id) 
-{
-	var sql = "SELECT * FROM entry_goals WHERE ENTRY_ID='"+entry_id+"'";
+function getEntryByCloudIdLocal(cloud_id) 
+{ 
+	var sql = "SELECT * FROM entries WHERE CLOUD_ID='"+cloud_id+"'"; 
 	
 	var results = [];
 	var resultSet = db.execute(sql);
-    while (resultSet.isValidRow()) { 
-    	results.push(resultSet.fieldByName('goal'));
-		resultSet.next();
+    while (resultSet.isValidRow()) {
+			results.push({
+			  id: resultSet.fieldByName('id'),
+			  cloud_id: resultSet.fieldByName('cloud_id'),
+			  record_id: resultSet.fieldByName('record_id'),
+		   	  main_entry: resultSet.fieldByName('main_entry'),
+		   	  date: resultSet.fieldByName('date'),
+		   	  location: resultSet.fieldByName('location'),
+	        });
+	resultSet.next();
     }
     resultSet.close();		
 
 	return results;
 }
-
-
-
 
 
 
@@ -118,6 +117,11 @@ function updateEntryLocal(entry_id, main_entry, date, location)
 }
 
 
+function deleteAllEntries()
+{
+	var sql = "DELETE FROM entries";
+	db.execute(sql);
+}
 
 
 function deleteEntriesTableLocal()
@@ -132,10 +136,4 @@ function deleteEntryLocal(id)
 	var sql = "DELETE FROM entries WHERE ID='"+id+ "'";
 	db.execute(sql);
 	
-}
-
-function deleteGoalsForEntryLocal(entry_id)
-{
-	var sql = "DELETE FROM entry_goals WHERE ENTRY_ID = '"+entry_id+"'";
-	db.execute(sql);
 }

@@ -5,7 +5,7 @@ function initTreatmentsDBLocal()
 {
 	Ti.include('ui/common/database/database.js');
 	
-	db.execute('CREATE TABLE IF NOT EXISTS treatments (ID INTEGER PRIMARY KEY AUTOINCREMENT, ENTRY_ID INTEGER, APPOINTMENT_ID INTEGER, START_DATE TEXT NOT NULL,END_DATE TEXT NOT NULL,MEDICATION TEXT,DOSAGE TEXT, FREQUENCY TEXT, SUCCESSFUL INTEGER, FOREIGN KEY(ENTRY_ID) REFERENCES entries (ID), FOREIGN KEY(APPOINTMENT_ID) REFERENCES appointments (ID))');
+	db.execute('CREATE TABLE IF NOT EXISTS treatments (ID INTEGER PRIMARY KEY AUTOINCREMENT, CLOUD_ID TEXT, ENTRY_ID INTEGER, APPOINTMENT_ID INTEGER, START_DATE TEXT NOT NULL,END_DATE TEXT NOT NULL,MEDICATION TEXT,DOSAGE TEXT, FREQUENCY TEXT, SUCCESSFUL INTEGER, FOREIGN KEY(ENTRY_ID) REFERENCES entries (ID), FOREIGN KEY(APPOINTMENT_ID) REFERENCES appointments (ID))');
 	db.execute('CREATE TABLE IF NOT EXISTS treatment_symptoms (TREATMENT_ID INTEGER NOT NULL, SYMPTOM TEXT NOT NULL, FOREIGN KEY(TREATMENT_ID) REFERENCES treatments (ID))');
 	db.execute('CREATE TABLE IF NOT EXISTS treatment_sideEffects (TREATMENT_ID INTEGER NOT NULL, SIDE_EFFECT TEXT NOT NULL, FOREIGN KEY(TREATMENT_ID) REFERENCES treatments (ID))');
 }
@@ -25,6 +25,14 @@ function insertTreatmentLocal(entry_id, appointment_id, start_date, end_date, me
 	db.execute(sql); 
 	
 	return db.lastInsertRowId; 
+}
+
+function updateTreatmentCloudIdLocal(treatment_id, cloud_id)
+{
+	var sql = "UPDATE treatments SET CLOUD_ID='"+cloud_id+"' ";
+	sql = sql + "WHERE ID='"+treatment_id+"'"; 
+	
+	db.execute(sql); 
 }
 
 
@@ -57,6 +65,7 @@ function getAllTreatmentsLocal()
     while (resultSet.isValidRow()) {
 			results.push({
 			  id: resultSet.fieldByName('id'),
+			  cloud_id: resultSet.fieldByName('cloud_id'),
 			  entry_id: resultSet.fieldByName('entry_id'),
 			  appointment_id: resultSet.fieldByName('appointment_id'),
 		   	  start_date: resultSet.fieldByName('start_date'),
@@ -64,7 +73,7 @@ function getAllTreatmentsLocal()
 		   	  medication: resultSet.fieldByName('medication'),
 		   	  dosage: resultSet.fieldByName('dosage'),
 		   	  frequency: resultSet.fieldByName('frequency'),
-		   	  successful: resultSet.fileByName('successful'),
+		   	  successful: resultSet.fieldByName('successful'),
 	        });
 	resultSet.next();
     }
@@ -82,6 +91,7 @@ function getTreatmentsForEntryLocal(entry_id)
     while (resultSet.isValidRow()) {
 			results.push({
 			  id: resultSet.fieldByName('id'),
+			  cloud_id: resultSet.fieldByName('cloud_id'),
 			  entry_id: resultSet.fieldByName('entry_id'),
 			  appointment_id: resultSet.fieldByName('appointment_id'),
 		   	  start_date: resultSet.fieldByName('start_date'),
@@ -107,6 +117,7 @@ function getTreatmentsForAppointmentLocal(appointment_id)
     while (resultSet.isValidRow()) {
 			results.push({
 			  id: resultSet.fieldByName('id'),
+			  cloud_id: resultSet.fieldByName('cloud_id'),
 			  entry_id: resultSet.fieldByName('entry_id'),
 			  appointment_id: resultSet.fieldByName('appointment_id'),
 		   	  start_date: resultSet.fieldByName('start_date'),
@@ -133,6 +144,7 @@ function getTreatmentLocal(treatment_id)
     while (resultSet.isValidRow()) {
 			results.push({
 			  id: resultSet.fieldByName('id'),
+			  cloud_id: resultSet.fieldByName('cloud_id'),
 			  entry_id: resultSet.fieldByName('entry_id'),
 			  appointment_id: resultSet.fieldByName('appointment_id'),
 		   	  start_date: resultSet.fieldByName('start_date'),
@@ -140,7 +152,7 @@ function getTreatmentLocal(treatment_id)
 		   	  medication: resultSet.fieldByName('medication'),
 		   	  dosage: resultSet.fieldByName('dosage'),
 		   	  frequency: resultSet.fieldByName('frequency'),
-		   	  successful: resultSet.fileByName('successful'),
+		   	  successful: resultSet.fieldByName('successful'),
 	        });
 	resultSet.next();
     }
@@ -237,5 +249,26 @@ function deleteSymptomsForTreatmentLocal(treatment_id)
 function deleteSideEffectsForTreatmentLocal(treatment_id)
 {
 	var sql = "DELETE FROM treatment_sideEffects WHERE TREATMENT_ID = '"+treatment_id+"'";
+	db.execute(sql);
+}
+
+function deleteAllTreatments()
+{
+	deleteAllTreatmentSymptoms();
+	deleteAllTreatmentSideEffects();
+	
+	var sql = "DELETE FROM treatments";
+	db.execute(sql);
+}
+
+function deleteAllTreatmentSymptoms()
+{
+	var sql = "DELETE FROM treatment_symptoms";
+	db.execute(sql);
+}
+
+function deleteAllTreatmentSideEffects()
+{
+	var sql = "DELETE FROM treatment_sideEffects";
 	db.execute(sql);
 }

@@ -15,7 +15,6 @@ function completeRecordsTableView()
 			if(records[i].current_type == 'entry') {
 				var entry = getEntryLocal(records[i].current);
 				entry = entry[0];
-				entry.goals = getGoalsOfEntryLocal(entry.id);
 				var record = require('ui/common/views/recordView');
 				var view = new record({ entry: entry });
 			}
@@ -124,7 +123,7 @@ function completeRecordsTableView()
 					row.setHeight(view.height+40);
 				});
 				
-				var temp_rows = sectionRecords.rows;
+				var temp_rows = (sectionRecords.rowCount > 0)?sectionRecords.rows:[];
 				temp_rows.unshift(row);
 				sectionRecords.rows = temp_rows;
 				table.data = [sectionRecords, sectionPersonal];

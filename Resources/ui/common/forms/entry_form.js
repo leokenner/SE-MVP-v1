@@ -17,12 +17,6 @@ function entry_form(input)
 		treatments: input.treatments?input.treatments:[],
 	}
 	
-	var goals_string='';
-	for(var i=0;i < entry.goals.length; i++) {
-		goals_string += entry.goals[i];
-		if(i != entry.goals.length -1) goals_string += ', ';
-	}
-	
 		
 	var win = Ti.UI.createWindow({
 		title: 'Entry',
@@ -59,29 +53,26 @@ function entry_form(input)
 		if(entry.record_id == null) {
 			entry.record_id = insertRecordLocal(Titanium.App.Properties.getString('child'));
 			entry.id = insertEntryLocal(entry.record_id,main_entry.value,entry.date,location.value);
-			updateRecordLocal(entry.record_id,entry.id,'entry',timeFormatted(new Date()).date,timeFormatted(new Date()).time);		
+			updateRecordLocal(entry.record_id,entry.id,'entry',timeFormatted(new Date()).date,timeFormatted(new Date()).time);
+			
+			createObjectACS('records', { id: entry.record_id, child_id: Titanium.App.Properties.getString('child'), current: entry.id,
+										current_type: 'entry', latest_date: timeFormatted(new Date()).date, latest_time: timeFormatted(new Date()).time, });		
+		
+		
+			createObjectACS('entries', { id: entry.id, record_id: entry.record_id, main_entry: main_entry.value, 
+											date: entry.date, location: location.value, });
 		}
 		else if(entry.id == null) {
 			entry.id = insertEntryLocal(entry.record_id,main_entry.value,entry.date,location.value);
 			updateRecordLocal(entry.record_id,Titanium.App.Properties.getString('child'),entry.id,'entry',timeFormatted(new Date()).date,timeFormatted(new Date()).time);
+		
+			createObjectACS('entries', { id: entry.id, record_id: entry.record_id, main_entry: main_entry.value, 
+											date: entry.date, location: location.value, });
 		}
 		else {
 			updateEntryLocal(entry.id,main_entry.value,entry.date,location.value);
 			updateRecordTimesForEntryLocal(entry.id, timeFormatted(new Date()).date, timeFormatted(new Date()).time);
 		}
-		deleteGoalsForEntryLocal(entry.id);
-		entry.goals.splice(0, entry.goals.length);
-		if(goals_field.value != null) {
-			if(goals_field.value.length > 1) {
-				var final_goals = goals_field.value.split(',');
-				for(var i=0;i < final_goals.length; i++) {
-					if(final_goals[i].length < 2) continue;
-					final_goals[i] = final_goals[i].replace(/^\s\s*/, '');  // Remove Preceding white space
-					insertGoalForEntryLocal(entry.id,final_goals[i]);
-					entry.goals.push(final_goals[i]);
-				}
-			}
-		}	
 		
 		entry.main_entry = main_entry.value;
 		entry.location = location.value;
@@ -110,11 +101,6 @@ function entry_form(input)
 	sectionLocation.add(Ti.UI.createTableViewRow({ title: 'Location' }));
 	var location = Titanium.UI.createTextField({ hintText: 'eg: home', value: entry.location, width: '50%', left: '35%' });
 	sectionLocation.rows[0].add(location);
-	
-	var sectionGoals = Ti.UI.createTableViewSection({ headerTitle: '*Goals (list using commas)' });
-	sectionGoals.add(Ti.UI.createTableViewRow({ height: 90, selectedBackgroundColor: 'white' }));
-	var goals_field = Titanium.UI.createTextArea({ hintText: 'Seperate each goal by comma', value: goals_string, width: '100%', top: 5, font: { fontSize: 17 }, height: 70, borderRadius: 10 });
-	sectionGoals.rows[0].add(goals_field);
 	
 	
 	table.data = [sectionDate, sectionMain, sectionLocation];

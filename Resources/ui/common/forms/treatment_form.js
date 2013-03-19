@@ -92,6 +92,8 @@ save_btn.addEventListener('click', function() {
 					var entry_id = '"'+treatment.entry_id+'"'; 
 					treatment.id = insertTreatmentLocal(entry_id,null,start_date.text,end_date.text,medication.value,dosage.value,frequency.text);
 				}
+				createObjectACS('treatments', { id: treatment.id, start_date: start_date.text, end_date: end_date.text, 
+												medication: medication.value, dosage: dosage.value, frequency: frequency.text, });
 			}
 			else {
 				updateTreatmentLocal(treatment.id,start_date.text,end_date.text,medication.value,dosage.value,frequency.text);
