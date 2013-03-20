@@ -2,7 +2,7 @@
 
 function loadDatabase()
 {
-	Ti.include('ui/common/database/database.js');
+	//Ti.include('ui/common/database/database.js');
 	
 	//var parent_id = insertUserLocal(null, 'Adarsh', 'Hasija');
 	var users = getAllUsersLocal();
@@ -15,7 +15,7 @@ function loadDatabase()
 		getActivitiesACS();
 	});
 	
-	Ti.App.addEventListener('loadedTreatmentsFromCloud', function() { 
+	Ti.App.addEventListener('loadFromCloudComplete', function() { 
 		var children = getAllChildrenLocal();
 		if(children.length == 0) {
 			var row_id = insertChildLocal(user.id, 'New', 'Child',null,null,null);

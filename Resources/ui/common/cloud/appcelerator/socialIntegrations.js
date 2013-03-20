@@ -22,6 +22,7 @@ function externalAccountLoginACS()
 	   				 						
 	   			 		var user = g.users[0];
 	   			 		var user_id = insertUserLocal('"'+user.id+'"', user.first_name, user.last_name);
+	   			 		Ti.App.fireEvent('userLoggedIn');
 	    			}
 	    			else {
 	    			}

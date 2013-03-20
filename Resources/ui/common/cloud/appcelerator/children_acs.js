@@ -4,7 +4,8 @@ function getChildrenACS(query)
 {
 	Cloud.Objects.query({ classname: 'children', where: query }, 
 		function (e) {
-    		if (e.success) { 
+    		if (e.success) {
+    			if(e.children.length == 0) Ti.App.fireEvent('loadFromCloudComplete');
     			for(var i=e.children.length-1;i > -1 ;i--) { 
 				    var child = e.children[i];
 				    

@@ -33,7 +33,7 @@ function getTreatmentsACS(query)
 						insertSideEffectForTreatmentLocal(treatment_local_id, side_effect[j]);
 					}
 				}
-				Ti.App.fireEvent('loadedTreatmentsFromCloud'); 
+				Ti.App.fireEvent('loadFromCloudComplete'); 
 			}
      		else alert('Error:\n' + ((e.error && e.message) || JSON.stringify(e)));
 	});

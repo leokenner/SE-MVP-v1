@@ -16,7 +16,7 @@ Ti.Facebook.addEventListener('login', function(f) {
 	    	//updateUserLocal(user.local_id,user.first_name,user.last_name,user.email);	
 	    } */
 	  
-	  Titanium.App.fireEvent('userLoggedIn');
+	 // Titanium.App.fireEvent('userLoggedIn');
     }		
     else {
     	alert('Error, please try again');

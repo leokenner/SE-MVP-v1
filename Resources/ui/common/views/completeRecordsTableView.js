@@ -30,7 +30,7 @@ function completeRecordsTableView()
 				
 				sectionRecords.add(row);
 		}
-		//table.data.splice(0, 1, sectionRecords);
+
 		table.data = [sectionRecords, sectionPersonal];
 	}
 

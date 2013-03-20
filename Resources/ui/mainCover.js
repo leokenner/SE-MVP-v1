@@ -116,8 +116,8 @@ Ti.include('ui/common/cloud/appcelerator/treatments_acs.js');
 
 	fblogin_btn.addEventListener('click', function() {
 		//facebookDialog('login', { client_id: Ti.Facebook.appid, scope: Titanium.Facebook.permissions, });
-		alert(Titanium.Facebook.getAccessToken());
-		//Ti.Facebook.authorize();
+		//alert(Titanium.Facebook.getAccessToken());
+		Ti.Facebook.authorize();
 	});
 	
 	self.add(fblogin_btn);
