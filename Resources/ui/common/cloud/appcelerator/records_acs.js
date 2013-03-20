@@ -7,7 +7,9 @@ function getRecordsACS(query, new_child_id)
     		if (e.success) { 
     			for(var i=e.records.length-1;i > -1 ;i--) { 
 				    var record = e.records[i];
-					//var record_local_id = insertRecordLocal(record.child_id, record.current, record.latest_date, record.latest_time, record.current_type);
+					
+					if((getRecordByCloudIdLocal(record.id)).length > 0) continue;
+					
 					var record_local_id = insertRecordLocal(new_child_id);
 					updateRecordCloudIdLocal(record_local_id, record.id);
 					getEntriesACS({ user_id: query.user_id, record_id: record.id, }, record_local_id, record.latest_date, record.latest_time)

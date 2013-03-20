@@ -100,6 +100,34 @@ function getActivitiesForEntryLocal(entry_id)
 }
 
 
+function getActivityByCloudIdLocal(cloud_id) 
+{ 
+	var sql = "SELECT * FROM activities WHERE CLOUD_ID='"+cloud_id+"'"; 
+	
+	var results = [];
+	var resultSet = db.execute(sql);
+    while (resultSet.isValidRow()) {
+			results.push({
+			  id: resultSet.fieldByName('id'),
+			  cloud_id: resultSet.fieldByName('cloud_id'),
+			  entry_id: resultSet.fieldByName('entry_id'),
+			  appointment_id: resultSet.fieldByName('appointment_id'),
+		   	  main_activity: resultSet.fieldByName('main_activity'),
+		   	  start_date: resultSet.fieldByName('start_date'),
+		   	  end_date: resultSet.fieldByName('end_date'),
+		   	  frequency: resultSet.fieldByName('frequency'),
+		   	  location: resultSet.fieldByName('location'),
+		   	  successful: resultSet.fieldByName('successful'),
+		   	  end_notes: resultSet.fieldByName('end_notes'),
+	        });
+	resultSet.next();
+    }
+    resultSet.close();		
+
+	return results;
+}
+
+
 function getActivitiesForAppointmentLocal(appointment_id) 
 { 
 	var sql = "SELECT * FROM activities WHERE APPOINTMENT_ID='"+appointment_id+"'"; 

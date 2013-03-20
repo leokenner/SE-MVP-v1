@@ -108,6 +108,33 @@ function getTreatmentsForEntryLocal(entry_id)
 	return results;
 }
 
+function getTreatmentByCloudIdLocal(cloud_id) 
+{ 
+	var sql = "SELECT * FROM treatments WHERE CLOUD_ID='"+cloud_id+"'"; 
+	
+	var results = [];
+	var resultSet = db.execute(sql);
+    while (resultSet.isValidRow()) {
+			results.push({
+			  id: resultSet.fieldByName('id'),
+			  cloud_id: resultSet.fieldByName('cloud_id'),
+			  entry_id: resultSet.fieldByName('entry_id'),
+			  appointment_id: resultSet.fieldByName('appointment_id'),
+		   	  start_date: resultSet.fieldByName('start_date'),
+		   	  end_date: resultSet.fieldByName('end_date'),
+		   	  medication: resultSet.fieldByName('medication'),
+		   	  dosage: resultSet.fieldByName('dosage'),
+		   	  frequency: resultSet.fieldByName('frequency'),
+		   	  successful: resultSet.fieldByName('successful'),
+	        });
+	resultSet.next();
+    }
+    resultSet.close();		
+
+	return results;
+}
+
+
 function getTreatmentsForAppointmentLocal(appointment_id) 
 { 
 	var sql = "SELECT * FROM treatments WHERE APPOINTMENT_ID='"+appointment_id+"'"; 

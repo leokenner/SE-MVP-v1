@@ -29,8 +29,9 @@ function completeRecordsTableView()
 				});
 				
 				sectionRecords.add(row);
-				table.data = [sectionRecords, sectionPersonal];
 		}
+		//table.data.splice(0, 1, sectionRecords);
+		table.data = [sectionRecords, sectionPersonal];
 	}
 
 	var child = getChildLocal(Titanium.App.Properties.getString('child'));
@@ -70,11 +71,12 @@ function completeRecordsTableView()
 	
 	var sectionRecords = Ti.UI.createTableViewSection();
 	var sectionPersonal = Ti.UI.createTableViewSection();
-	sectionPersonal.add(Ti.UI.createTableViewRow());
-	sectionPersonal.add(Ti.UI.createTableViewRow({ height: 70 }));
-	sectionPersonal.rows[0].add(personalCardView);
-	sectionPersonal.rows[0].setHeight(personalCardView.height+40);
+	sectionPersonal.add(Ti.UI.createTableViewRow({ height: 20, }));
+	//sectionPersonal.add(Ti.UI.createTableViewRow({ height: 70, }));  
+	//sectionPersonal.rows[0].add(personalCardView);
+	//sectionPersonal.rows[0].setHeight(personalCardView.height+40);
 	table.data = [sectionRecords, sectionPersonal];
+	table.setFooterView(personalCardView);
 	self.add(table);
 	
 	var childName_btn = Ti.UI.createLabel({
@@ -92,7 +94,11 @@ function completeRecordsTableView()
 	self.add(childName_btn);
 	
 	childName_btn.addEventListener('click', function() {
-		table.scrollToIndex(sectionRecords.rowCount);
+		var sum=0;
+		for(var i=0; i < sectionRecords.rowCount; i++) {
+			sum += sectionRecords.rows[i].height;
+		}
+		table.scrollToTop(sum);
 	});
 	
 	//This changes the child name label if the child name is changed using the form
@@ -126,7 +132,7 @@ function completeRecordsTableView()
 				var temp_rows = (sectionRecords.rowCount > 0)?sectionRecords.rows:[];
 				temp_rows.unshift(row);
 				sectionRecords.rows = temp_rows;
-				table.data = [sectionRecords, sectionPersonal];
+				table.data = [sectionRecords];
 				table.scrollToIndex(0);
 			}
 		}); 

@@ -28,7 +28,8 @@ function updateUserLocal(id, first_name, last_name, email)
 	db.execute(sql);
 }
 
-function getAllUsersLocal() {
+function getAllUsersLocal() 
+{
 	var sql = "SELECT * FROM users";
 	
 	var results = [];
@@ -49,7 +50,8 @@ function getAllUsersLocal() {
 }
 
 
-function getUserLocal(id) {
+function getUserLocal(id) 
+{
 	var sql = "SELECT * FROM users WHERE ID='"+id+"'";
 	
 	var results = [];
@@ -72,5 +74,11 @@ function getUserLocal(id) {
 function deleteUserLocal(cloud_id)
 {
 	var sql = "DELETE FROM users WHERE CLOUD_ID='"+cloud_id+ "'";
+	db.execute(sql);
+}
+
+function deleteAllUsers()
+{
+	var sql = "DELETE FROM users";
 	db.execute(sql);
 }

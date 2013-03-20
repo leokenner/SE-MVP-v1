@@ -9,7 +9,10 @@ function getActivitiesACS()
     		if (e.success) { 
     			for(var i=e.activities.length-1;i > -1 ;i--) { 
 				    var activity = e.activities[i];
-				    var goals = e.activities[i].goals;
+				    
+				    if((getActivityByCloudIdLocal(activity.id)).length > 0) continue;
+				    
+				    var goals = e.activities[i].goals?e.activities[i].goals:[];
 				    
 				    if(activity.appointment_id != null && activity.appointment_id != undefined) {
 				    	var appointment = getAppointmentByCloudIdLocal(activity.appointment_id);

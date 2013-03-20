@@ -30,7 +30,7 @@ if (Ti.version < 1.8 ) {
 	
 	var mainWindow;
 	var mainCover = require('ui/mainCover');
-	var leftWindow = require('ui/common/menus/leftMenu');
+	//var leftWindow = require('ui/common/menus/leftMenu');
 	var rightWindow = require('ui/common/menus/rightMenu');
 	var tabGroup = require('ui/handheld/ApplicationTabGroup');
 	if (isTablet) {
@@ -49,15 +49,14 @@ if (Ti.version < 1.8 ) {
 	
 	mainCover = new mainCover();
 	mainCover.open();
+	//loadDatabase();
 	
 	Ti.App.addEventListener('userLoggedIn', function() {
 		loadDatabase();
-		//leftWindow = new leftWindow();
-		//leftWindow.open();
-		//new tabGroup(new mainWindow()).open();
 	});
 	
 	Ti.App.addEventListener('databaseLoaded', function() {
+		var leftWindow = require('ui/common/menus/leftMenu');
 		leftWindow = new leftWindow();
 		leftWindow.open();
 		new tabGroup(new mainWindow()).open();

@@ -29,11 +29,15 @@ function personalCard() {
 		diagnosis.text = child.diagnosis?child.diagnosis:'Unknown';
 	}
 	
+	var main_view = Ti.UI.createView({ layout: 'vertical', });
+	
 	var table = Ti.UI.createTableView({
 		backgroundColor: 'white',
 		borderColor: 'black',
 		rowHeight: 45,
 	});
+	main_view.add(table);
+	
 	
 	var row = Ti.UI.createTableViewRow({ title: 'Personal Card', backgroundColor: 'blue', color: 'white' });
 	var right_btn = Ti.UI.createLabel({ 
@@ -97,6 +101,7 @@ function personalCard() {
 	table.sections[0].rows[4].add(diagnosis);
 	
 	table.setHeight(table.sections[0].rows.length*45);
+	main_view.setHeight(table.height+70);
 	
 	normalView();
 	
@@ -105,7 +110,8 @@ function personalCard() {
 	});
 	
 	
-	return table;
+	//return table;
+	return main_view;
 	
 }
 

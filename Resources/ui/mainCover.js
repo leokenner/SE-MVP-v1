@@ -4,9 +4,9 @@ function mainCover() {
 var Cloud = require('ti.cloud');
 
 Ti.include('ui/common/database/database.js');
+Ti.include('ui/common/cloud/appcelerator/users_acs.js');
 Ti.include('ui/common/cloud/appcelerator/social/facebook.js');
 Ti.include('ui/common/cloud/appcelerator/socialIntegrations.js');
-Ti.include('ui/common/cloud/appcelerator/users_acs.js');
 Ti.include('ui/common/cloud/appcelerator/objects.js');
 Ti.include('ui/common/cloud/appcelerator/children_acs.js');
 Ti.include('ui/common/cloud/appcelerator/records_acs.js');
@@ -52,6 +52,12 @@ Ti.include('ui/common/cloud/appcelerator/treatments_acs.js');
 	table.appendRow(passwordConfirm_row);
 	self.add(table);
 	
+	var fb_button = Ti.Facebook.createLoginButton({
+    top : '45%',
+    style : Ti.Facebook.BUTTON_STYLE_WIDE
+	});
+
+	self.add(fb_button);
 	
 	var login_btn = Titanium.UI.createButtonBar({
 	labels:['Login'],
@@ -109,7 +115,9 @@ Ti.include('ui/common/cloud/appcelerator/treatments_acs.js');
 	});
 
 	fblogin_btn.addEventListener('click', function() {
-		Ti.Facebook.authorize();
+		//facebookDialog('login', { client_id: Ti.Facebook.appid, scope: Titanium.Facebook.permissions, });
+		alert(Titanium.Facebook.getAccessToken());
+		//Ti.Facebook.authorize();
 	});
 	
 	self.add(fblogin_btn);

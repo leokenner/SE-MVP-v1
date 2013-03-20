@@ -34,6 +34,16 @@ function loginUserACS(email, password)
     	if (e.success) {
     		initDBLocal();
     		Ti.API.info('local database initialized: appcelerator/users.js');
+    		
+    		deleteAllTreatments();
+			deleteAllActivities();  
+			deleteAllAppointments();  
+			deleteAllEntries();
+			deleteAllRecords();
+			deleteAllRelationships();
+			deleteAllChildren();
+			deleteAllUsers();
+    		
         	var user = e.users[0];
         	user.id = '"'+user.id+'"';
         	
@@ -43,7 +53,7 @@ function loginUserACS(email, password)
         	
         	Ti.App.fireEvent('userLoggedIn');
         	
-        	return user;
+        	
     	} else {
         	alert('Error: \n' + ((e.error && e.message) || JSON.stringify(e)));
  	       return null;
@@ -59,7 +69,7 @@ function logoutUserACS()
         	alert('Logged out');
         	var user = getUserLocal(Titanium.App.Properties.getString('user'));
 				user = user[0];  
-			deleteUserLocal(user.cloud_id);
+			//deleteUserLocal(user.cloud_id);
     	} else {
         	alert('Error:\n' + ((e.error && e.message) || JSON.stringify(e)));
     	}

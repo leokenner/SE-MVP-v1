@@ -7,6 +7,9 @@ function getEntriesACS(query, record_local_id, latest_date, latest_time)
     		if (e.success) { 
     			for(var i=e.entries.length-1;i > -1 ;i--) { 
 				    var entry = e.entries[i];
+				    
+				    if((getEntryByCloudIdLocal(entry.id)).length > 0) continue;
+				    
 					var entry_local_id = insertEntryLocal(record_local_id, entry.main_entry, entry.date, entry.location);
 					updateEntryCloudIdLocal(entry_local_id, entry.id);
 					updateRecordLocal(record_local_id, entry_local_id, 'entry', latest_date, latest_time);

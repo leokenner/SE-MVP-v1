@@ -76,6 +76,29 @@ function getChildLocal(id) {
 	return results;
 }
 
+function getChildByCloudIdLocal(cloud_id) { 
+	var sql = "SELECT * FROM children WHERE CLOUD_ID='"+cloud_id+"'";
+	
+	var results = [];
+	var resultSet = db.execute(sql);
+    while (resultSet.isValidRow()) {
+			results.push({
+		      id: resultSet.fieldByName('id'),
+		      cloud_id: resultSet.fieldByName('cloud_id'),
+		      user_id: resultSet.fieldByName('user_id'),
+		   	  first_name: resultSet.fieldByName('first_name'),
+		   	  last_name: resultSet.fieldByName('last_name'),
+		   	  sex: resultSet.fieldByName('sex'),
+		   	  date_of_birth: resultSet.fieldByName('date_of_birth'),
+		   	  diagnosis: resultSet.fieldByName('diagnosis'),
+	        });
+	resultSet.next();
+    }
+    resultSet.close();		
+
+	return results;
+}
+
 function getChildByNameLocal(first_name, last_name) { 
 	var sql = "SELECT * FROM children WHERE FIRST_NAME='"+first_name+"' AND LAST_NAME='"+last_name+"'";
 	
@@ -148,5 +171,11 @@ function updateChildCloudIdLocal(id, cloud_id)
 function deleteChildByUserIdLocal(user_id)
 {
 	var sql = "DELETE FROM children WHERE USER_ID='"+user_id+ "'";
+	db.execute(sql);
+}
+
+function deleteAllChildren()
+{
+	var sql = "DELETE FROM children";
 	db.execute(sql);
 }

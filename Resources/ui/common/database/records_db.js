@@ -125,6 +125,29 @@ function getRecordByIdLocal(id)
 	return results;
 }
 
+function getRecordByCloudIdLocal(cloud_id) 
+{ 
+	var sql = "SELECT * FROM records WHERE CLOUD_ID='"+cloud_id+"'";   
+	
+	var results = [];
+	var resultSet = db.execute(sql);
+    while (resultSet.isValidRow()) {
+			results.push({
+			  id: resultSet.fieldByName('id'),
+			  cloud_id: resultSet.fieldByName('cloud_id'),
+			  child_id: resultSet.fieldByName('child_id'),
+		   	  current: resultSet.fieldByName('current'),
+		   	  current_type: resultSet.fieldByName('current_type'),
+		   	  latest_date: resultSet.fieldByName('latest_date'),
+		   	  latest_time: resultSet.fieldByName('latest_time'),
+	        });
+	resultSet.next();
+    }
+    resultSet.close();		
+
+	return results;
+}
+
 
 function deleteRecordsByCloudIdLocal(cloud_id)
 {

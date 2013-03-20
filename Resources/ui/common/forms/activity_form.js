@@ -85,7 +85,7 @@ save_btn.addEventListener('click', function() {
 			}
 			
 			createObjectACS('activities', { id: activity.id, activity_field: activity_field.value, start_date: start_date.text,
-											end_date: end_date.text, location: location.value, frequency: frequency.text, });
+											end_date: end_date.text, location: location.value, frequency: frequency.text, end_notes: endNotes_field.value });
 		}
 		else {
 				updateActivityLocal(activity.id,start_date.text,end_date.text,activity_field.value,location.value,frequency.text);

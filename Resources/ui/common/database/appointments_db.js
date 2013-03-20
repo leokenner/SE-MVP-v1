@@ -137,6 +137,31 @@ function getAppointmentByCloudIdLocal(cloud_id)
 
 
 
+function getAppointmentByCloudIdLocal(cloud_id) 
+{ 
+	var sql = "SELECT * FROM appointments WHERE CLOUD_ID='"+cloud_id+"'"; 
+	
+	var results = [];
+	var resultSet = db.execute(sql);
+    while (resultSet.isValidRow()) {
+			results.push({
+			  id: resultSet.fieldByName('id'),
+			  cloud_id: resultSet.fieldByName('cloud_id'),
+			  entry_id: resultSet.fieldByName('entry_id'),
+		   	  diagnosis: resultSet.fieldByName('diagnosis'),
+		   	  complete: resultSet.fieldByName('complete'),
+		   	  date: resultSet.fieldByName('date'),
+		   	  time: resultSet.fieldByName('time'),
+	        });
+	resultSet.next();
+    }
+    resultSet.close();		
+
+	return results;
+}
+
+
+
 function getAppointmentLocal(appointment_id) 
 { 
 	var sql = "SELECT * FROM appointments WHERE ID='"+appointment_id+"'"; 

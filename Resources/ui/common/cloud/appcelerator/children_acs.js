@@ -7,6 +7,9 @@ function getChildrenACS(query)
     		if (e.success) { 
     			for(var i=e.children.length-1;i > -1 ;i--) { 
 				    var child = e.children[i];
+				    
+				    if((getChildByCloudIdLocal(child.id)).length > 0) continue;
+				    
 				    var relationships = e.children[i].relationships?e.children[i].relationships:[];
 					var child_local_id = insertChildLocal(Titanium.App.Properties.getString('user'), child.first_name, child.last_name, '"'+child.sex+'"','"'+ child.date_of_birth +'"', '"'+child.diagnosis+'"');
 					updateChildCloudIdLocal(child_local_id, child.id);

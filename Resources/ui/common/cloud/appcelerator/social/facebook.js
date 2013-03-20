@@ -5,7 +5,7 @@ Ti.Facebook.permissions = ['publish_actions'];
 Ti.Facebook.addEventListener('login', function(f) {
     if(f.success) {
  		var user = externalAccountLoginACS();
- 		if(!user.email) {
+ 	/*	if(!user.email) {
 	   		Ti.API.info('first time user, need to get username and email from facebook: facebook.js');
 	   		//var data = facebookGraphRequestACS('me',{},'GET'); 
 	   		//updateUserACS(data);
@@ -14,7 +14,7 @@ Ti.Facebook.addEventListener('login', function(f) {
 	    else {
 	    	Ti.API.info('email and username already exist in cloud: facebook.js');
 	    	//updateUserLocal(user.local_id,user.first_name,user.last_name,user.email);	
-	    }
+	    } */
 	  
 	  Titanium.App.fireEvent('userLoggedIn');
     }		
@@ -34,5 +34,20 @@ function facebookGraphRequestACS(path, params, httpMethod)
 		   			 else if(e.error) {
 		   			 	Ti.API.info(e.error);
 		   			 } 	
+	});
+}
+
+function facebookDialog(type, data)
+{
+	Titanium.Facebook.dialog(type, data, function(e) {
+	    if(e.success && e.result) {
+	        alert("Success! New Post ID: " + e.result);
+	    } else {
+	        if(e.error) {
+	            alert(e.error);
+	        } else {
+	            alert("User canceled dialog.");
+	        }
+	    }
 	});
 }

@@ -23,7 +23,7 @@ function loadDatabase()
 			createObjectACS('children', { id: row_id, user_id: user.id, first_name: 'New', last_name: 'Child' });
 		}
 		else {
-			Titanium.App.Properties.setString('child', children[children.length-1].id);
+			Titanium.App.Properties.setString('child', children[0].id);
 		}
 		Ti.App.fireEvent('databaseLoaded');  
 	});  
@@ -31,24 +31,14 @@ function loadDatabase()
 
 
 function logout()
-{	
-	createRecordsACS();
-	createEntriesACS();
-	
+{		
 	updateChildrenACS();
 	updateRecordsACS();
 	updateEntriesACS();
 	updateAppointmentsACS();
 	updateActivitiesACS();
 	updateTreatmentsACS();  
-	
-	
-	deleteAllTreatments();
-	deleteAllActivities();  
-	deleteAllAppointments();  
-	deleteAllEntries();
-	deleteAllRecords();
-	deleteRelationshipsToUser(Titanium.App.Properties.getString('user'));  
-	deleteChildByUserIdLocal(Titanium.App.Properties.getString('user'));  
+
+	if(Ti.Facebook.loggedIn) Ti.Facebook.logout();
 	logoutUserACS();
 }

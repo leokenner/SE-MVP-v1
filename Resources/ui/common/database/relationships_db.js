@@ -63,3 +63,9 @@ function deleteRelationshipsToUser(user_id)
 	var sql = "DELETE FROM relationships WHERE USER_ID='"+user_id+ "'";
 	db.execute(sql);
 }
+
+function deleteAllRelationships()
+{
+	var sql = "DELETE FROM relationships";
+	db.execute(sql);
+}

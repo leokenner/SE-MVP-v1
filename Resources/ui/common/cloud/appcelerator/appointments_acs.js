@@ -7,8 +7,11 @@ function getAppointmentsACS(query, entry_local_id)
     		if (e.success) { 
     			for(var i=e.appointments.length-1;i > -1 ;i--) { 
 				    var appointment = e.appointments[i];
+				    
+				    if((getAppointmentByCloudIdLocal(appointment.id)).length > 0) continue;
+				    
 				    var doctor = e.appointments[i].doctor;
-				    var symptoms = e.appointments[i].symptoms;
+				    var symptoms = e.appointments[i].symptoms?e.appointments[i].symptoms:[];
 					var appointment_local_id = insertAppointmentLocal(entry_local_id, appointment.date, appointment.time, appointment.diagnosis);
 					updateAppointmentCompleteStatus(appointment_local_id, appointment.complete);
 					updateAppointmentCloudIdLocal(appointment_local_id, appointment.id);

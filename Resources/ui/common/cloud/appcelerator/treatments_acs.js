@@ -7,8 +7,11 @@ function getTreatmentsACS(query)
     		if (e.success) { 
     			for(var i=e.treatments.length-1;i > -1 ;i--) { 
 				    var treatment = e.treatments[i];
-				    var symptoms = e.treatments[i].symptoms;
-				    var side_effects = e.treatments[i].side_effects;
+				    
+				    if((getTreatmentByCloudIdLocal(treatment.id)).length > 0) continue;
+				    
+				    var symptoms = e.treatments[i].symptoms?e.treatments[i].symptoms:[];
+				    var side_effects = e.treatments[i].side_effects?e.treatments[i].side_effects:[];
 				    if(treatment.appointment_id != undefined && treatment.appointment_id != null) {
 				    	var appointment = getAppointmentByCloudIdLocal(treatment.appointment_id);
 				    	treatment.entry_id = null;  
