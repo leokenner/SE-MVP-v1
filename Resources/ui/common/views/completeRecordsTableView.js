@@ -6,8 +6,9 @@ function completeRecordsTableView()
 	
 	function loadTable()
 	{
-		var records_length = sectionRecords.rowCount;
-		for(var i=records_length-1 ; i > -1; i--) table.deleteRow(i);
+		//var records_length = table.data[0]?table.data[0].rowCount:0;     //sectionRecords.rowCount;
+		//for(var i=records_length-1 ; i > -1; i--) table.deleteRow(i);
+		if(table.data[0]) table.deleteSection(0);
 		
 		var records = getRecordsForChildLocal(child.id);
 
@@ -28,10 +29,10 @@ function completeRecordsTableView()
 					row.setHeight(view.height+40);
 				});
 				
-				sectionRecords.add(row);
+				table.appendRow(row);
 		}
 
-		table.data = [sectionRecords, sectionPersonal];
+		//table.data = [sectionRecords, sectionPersonal];
 	}
 
 	var child = getChildLocal(Titanium.App.Properties.getString('child'));
@@ -69,13 +70,10 @@ function completeRecordsTableView()
 	var personalCardView = new personalCard();
 	
 	
-	var sectionRecords = Ti.UI.createTableViewSection();
-	var sectionPersonal = Ti.UI.createTableViewSection();
-	sectionPersonal.add(Ti.UI.createTableViewRow({ height: 20, }));
-	//sectionPersonal.add(Ti.UI.createTableViewRow({ height: 70, }));  
-	//sectionPersonal.rows[0].add(personalCardView);
-	//sectionPersonal.rows[0].setHeight(personalCardView.height+40);
-	table.data = [sectionRecords, sectionPersonal];
+	//var sectionRecords = Ti.UI.createTableViewSection();
+	//var sectionPersonal = Ti.UI.createTableViewSection();
+	//sectionPersonal.add(Ti.UI.createTableViewRow({ height: 20, }));
+	//table.data = [sectionRecords, sectionPersonal];
 	table.setFooterView(personalCardView);
 	self.add(table);
 	
@@ -129,10 +127,13 @@ function completeRecordsTableView()
 					row.setHeight(view.height+40);
 				});
 				
-				var temp_rows = (sectionRecords.rowCount > 0)?sectionRecords.rows:[];
+				var section = table.data[0]?table.data[0]:null
+				var temp_rows = section?section.rows:[];
 				temp_rows.unshift(row);
-				sectionRecords.rows = temp_rows;
-				table.data = [sectionRecords];
+				section.rows = temp_rows;
+				table.deleteSection(0);
+				table.appendSection(section);
+				//table.data = [sectionRecords, sectionPersonal];
 				table.scrollToIndex(0);
 			}
 		}); 

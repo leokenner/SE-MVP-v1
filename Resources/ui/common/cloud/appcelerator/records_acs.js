@@ -4,8 +4,12 @@ function getRecordsACS(query, new_child_id)
 {
 	Cloud.Objects.query({ classname: 'records', where: query }, 
 		function (e) {
-    		if (e.success) { 
-    			for(var i=e.records.length-1;i > -1 ;i--) { 
+    		if (e.success) {
+    			if(e.records.length == 0) {
+    				Ti.App.fireEvent('loadFromCloudComplete');
+    				return;
+    			}
+    			for(var i=e.records.length-1;i > -1 ;i--) {
 				    var record = e.records[i];
 					
 					if((getRecordByCloudIdLocal(record.id)).length > 0) continue;

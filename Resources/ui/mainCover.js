@@ -114,9 +114,7 @@ Ti.include('ui/common/cloud/appcelerator/treatments_acs.js');
 	style: Titanium.UI.iPhone.SystemButtonStyle.BAR
 	});
 
-	fblogin_btn.addEventListener('click', function() {
-		//facebookDialog('login', { client_id: Ti.Facebook.appid, scope: Titanium.Facebook.permissions, });
-		//alert(Titanium.Facebook.getAccessToken());
+	fblogin_btn.addEventListener('click', function() {		
 		Ti.Facebook.authorize();
 	});
 	

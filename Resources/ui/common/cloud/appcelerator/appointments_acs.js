@@ -4,7 +4,8 @@ function getAppointmentsACS(query, entry_local_id)
 {
 	Cloud.Objects.query({ classname: 'appointments', where: query }, 
 		function (e) {
-    		if (e.success) { 
+    		if (e.success) {
+    			if(e.appointments.length == 0) return; 
     			for(var i=e.appointments.length-1;i > -1 ;i--) { 
 				    var appointment = e.appointments[i];
 				    

@@ -5,20 +5,25 @@ function getChildrenACS(query)
 	Cloud.Objects.query({ classname: 'children', where: query }, 
 		function (e) {
     		if (e.success) {
-    			if(e.children.length == 0) Ti.App.fireEvent('loadFromCloudComplete');
-    			for(var i=e.children.length-1;i > -1 ;i--) { 
+    			if(e.children.length == 0) { 
+    				Ti.App.fireEvent('loadFromCloudComplete');
+    				return;
+    			}
+    			for(var i=e.children.length-1;i > -1 ;i--) {
 				    var child = e.children[i];
 				    
 				    if((getChildByCloudIdLocal(child.id)).length > 0) continue;
 				    
 				    var relationships = e.children[i].relationships?e.children[i].relationships:[];
-					var child_local_id = insertChildLocal(Titanium.App.Properties.getString('user'), child.first_name, child.last_name, '"'+child.sex+'"','"'+ child.date_of_birth +'"', '"'+child.diagnosis+'"');
+				    child.sex = child.sex?'"'+child.sex+'"':null;
+				    child.date_of_birth = child.date_of_birth?'"'+child.date_of_birth+'"':null;
+					child.diagnosis = child.diagnosis?'"'+child.diagnosis+'"':null;
+					var child_local_id = insertChildLocal(Titanium.App.Properties.getString('user'), child.first_name, child.last_name, child.sex ,child.date_of_birth , child.diagnosis);
 					updateChildCloudIdLocal(child_local_id, child.id);
 					for(var j=0; j < relationships.length; j++) {
 						insertRelationshipLocal(child_local_id,Titanium.App.Properties.getString('user'),relationships[j].relation);
 					}
 					getRecordsACS({ user_id: query.user_id, child_id: child.id }, child_local_id);
-					//Ti.App.fireEvent('loadedChildrenFromCloud');
 				}
 			}
      		else alert('Error:\n' + ((e.error && e.message) || JSON.stringify(e)));

@@ -20,7 +20,7 @@ function loadDatabase()
 		if(children.length == 0) {
 			var row_id = insertChildLocal(user.id, 'New', 'Child',null,null,null);
 			Titanium.App.Properties.setString('child', row_id);
-			createObjectACS('children', { id: row_id, user_id: user.id, first_name: 'New', last_name: 'Child' });
+			createObjectACS('children', { id: row_id, user_id: user.id, first_name: 'New', last_name: 'Child', });
 		}
 		else {
 			Titanium.App.Properties.setString('child', children[0].id);
@@ -39,6 +39,12 @@ function logout()
 	updateActivitiesACS();
 	updateTreatmentsACS();  
 
-	if(Ti.Facebook.loggedIn) Ti.Facebook.logout();
+	if(Ti.Facebook.loggedIn) {
+		Ti.Facebook.logout();
+		var url = 'https://login.facebook.com';
+		var client = Titanium.Network.createHTTPClient();
+		client.clearCookies(url);
+	}
 	logoutUserACS();
+	
 }

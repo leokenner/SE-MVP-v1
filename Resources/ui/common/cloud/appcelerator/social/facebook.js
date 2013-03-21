@@ -1,7 +1,7 @@
 
 
 Ti.Facebook.appid = '430480410336850';
-Ti.Facebook.permissions = ['publish_actions'];
+Ti.Facebook.permissions = ['publish_actions', 'read_stream'];
 Ti.Facebook.addEventListener('login', function(f) {
     if(f.success) {
  		var user = externalAccountLoginACS();
@@ -16,7 +16,6 @@ Ti.Facebook.addEventListener('login', function(f) {
 	    	//updateUserLocal(user.local_id,user.first_name,user.last_name,user.email);	
 	    } */
 	  
-	 // Titanium.App.fireEvent('userLoggedIn');
     }		
     else {
     	alert('Error, please try again');
