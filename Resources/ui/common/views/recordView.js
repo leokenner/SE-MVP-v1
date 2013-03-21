@@ -39,12 +39,12 @@ function recordView(input)
 				appointment.symptoms = getSymptomsOfAppointmentLocal(appointment.id);
 				appointment.activities = getActivitiesForAppointmentLocal(appointment.id);
 				appointment.treatments = getTreatmentsForAppointmentLocal(appointment.id);
-				for(var i=0;i<appointment.activities.length;i++) {
-					appointment.activities[i].goals = getGoalsOfActivityLocal(appointment.activities[i].id);
+				for(var j=0;j<appointment.activities.length;j++) {
+					appointment.activities[j].goals = getGoalsOfActivityLocal(appointment.activities[j].id);
 				}
-				for(var i=0;i<appointment.treatments.length;i++) {
-					appointment.treatments[i].symptoms = getSymptomsOfTreatmentLocal(appointment.treatments[i].id);
-					appointment.treatments[i].sideEffects = getSideEffectsOfTreatmentLocal(appointment.treatments[i].id);
+				for(var j=0;j<appointment.treatments.length;j++) {
+					appointment.treatments[j].symptoms = getSymptomsOfTreatmentLocal(appointment.treatments[j].id);
+					appointment.treatments[j].sideEffects = getSideEffectsOfTreatmentLocal(appointment.treatments[j].id);
 				}
 				
 				
@@ -55,8 +55,8 @@ function recordView(input)
 				row.add(appointmentView);
 				table.appendRow(row);
 				table.setHeight(table.height+appointmentView.height);
-				Ti.App.fireEvent('eventAdded');
 			}
+				Ti.App.fireEvent('eventAdded');
 		}
 		
 		
@@ -125,7 +125,8 @@ function recordView(input)
 				row.add(appointment);
 				table.appendRow(row);
 				table.setHeight(table.height+150);
-				Ti.App.fireEvent('eventAdded');
+				//Ti.App.fireEvent('eventAdded');
+				table.fireEvent('eventAdded');
 			}
 		});
 	}); 

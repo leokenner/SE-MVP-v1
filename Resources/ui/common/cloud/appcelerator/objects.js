@@ -90,15 +90,15 @@ function queryObjectACS(user, object, return_array)
  * 			object: the class in question
  * 	outputs: boolean: success or failure
  */
-function deleteObjectACS(user, object)
+function deleteObjectACS(objectName, id)
 {
 	Cloud.Objects.remove({
-    		classname: object,
-    		user: user
+    		classname: objectName,
+    		id: id
 		}, 
 		function (e) {
     		if (e.success) {
-        		return true;
+
     		} else {
         		alert('Error:\n' + ((e.error && e.message) || JSON.stringify(e)));
         		return false;

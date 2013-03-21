@@ -1,23 +1,31 @@
 var Cloud = require('ti.cloud');
 
-function getRecordsACS(query, new_child_id)
+function getRecordsACS(query /*, new_child_id */)
 {
 	Cloud.Objects.query({ classname: 'records', where: query }, 
 		function (e) {
     		if (e.success) {
     			if(e.records.length == 0) {
-    				Ti.App.fireEvent('loadFromCloudComplete');
-    				return;
+    		//		Ti.App.fireEvent('loadFromCloudComplete');
+    		//		return;
     			}
     			for(var i=e.records.length-1;i > -1 ;i--) {
 				    var record = e.records[i];
 					
 					if((getRecordByCloudIdLocal(record.id)).length > 0) continue;
 					
+					if(/^\d+$/.test(record.child_id)) { 
+				    	deleteObjectACS('records', record.id);
+				    	 continue; 
+				    }
+					
+					var new_child_id = getChildByCloudId(record.child_id)[0].id;
+					
 					var record_local_id = insertRecordLocal(new_child_id);
 					updateRecordCloudIdLocal(record_local_id, record.id);
-					getEntriesACS({ user_id: query.user_id, record_id: record.id, }, record_local_id, record.latest_date, record.latest_time)
-				} 
+					//getEntriesACS({ user_id: query.user_id, record_id: record.id, }, record_local_id, record.latest_date, record.latest_time)
+				}
+				getEntriesACS({ user_id: query.user_id, });
 			}
      		else alert('Error:\n' + ((e.error && e.message) || JSON.stringify(e)));
 	});

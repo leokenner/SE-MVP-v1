@@ -24,10 +24,11 @@ function completeRecordsTableView()
 				
 				row.setHeight(view.height+40);
 				
-				//If another appointment is added, increase the height of the row
+			/*	//If another appointment is added, increase the height of the row
 				Ti.App.addEventListener('eventAdded', function() {  
 					row.setHeight(view.height+40);
-				});
+				}); */
+				
 				
 				table.appendRow(row);
 		}
@@ -65,6 +66,14 @@ function completeRecordsTableView()
 		top: 45
 	});
 	
+	table.addEventListener('eventAdded', function(e) {
+		//alert(e);
+		var section = table.data[0];
+		var row = section.getRows()[e.index];
+		var view = row.getChildren()[0];
+		row.setHeight(view.height+40);
+	});
+	
 	
 	var personalCard = require('ui/common/user/personalCard');
 	var personalCardView = new personalCard();
@@ -93,8 +102,9 @@ function completeRecordsTableView()
 	
 	childName_btn.addEventListener('click', function() {
 		var sum=0;
-		for(var i=0; i < sectionRecords.rowCount; i++) {
-			sum += sectionRecords.rows[i].height;
+		var section = table.data[0];
+		for(var i=0; i < section.rowCount; i++) {
+			sum += section.rows[i].height;
 		}
 		table.scrollToTop(sum);
 	});

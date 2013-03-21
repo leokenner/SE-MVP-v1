@@ -4,11 +4,20 @@ function getTreatmentsACS(query)
 {
 	Cloud.Objects.query({ classname: 'treatments', where: query }, 
 		function (e) {
-    		if (e.success) { 
+    		if (e.success) {
+    			if(e.treatments.length == 0) {
+    			//	Ti.App.fireEvent('loadFromCloudComplete');
+    			//	return;
+    			} 
     			for(var i=e.treatments.length-1;i > -1 ;i--) { 
 				    var treatment = e.treatments[i];
 				    
 				    if((getTreatmentByCloudIdLocal(treatment.id)).length > 0) continue;
+				    
+				    if(/^\d+$/.test(treatment.entry_id)) { 
+				    	deleteObjectACS('treatments', treatment.id);
+				    	 continue; 
+				    }
 				    
 				    var symptoms = e.treatments[i].symptoms?e.treatments[i].symptoms:[];
 				    var side_effects = e.treatments[i].side_effects?e.treatments[i].side_effects:[];

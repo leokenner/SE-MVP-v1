@@ -11,11 +11,7 @@ function loadDatabase()
 	
 	getChildrenACS({ user_id: user.cloud_id });
 	
-	Ti.App.addEventListener('loadedAppointmentsFromCloud', function() {
-		getActivitiesACS();
-	});
-	
-	Ti.App.addEventListener('loadFromCloudComplete', function() { 
+	var loadFromCloud = function() {
 		var children = getAllChildrenLocal();
 		if(children.length == 0) {
 			var row_id = insertChildLocal(user.id, 'New', 'Child',null,null,null);
@@ -26,7 +22,9 @@ function loadDatabase()
 			Titanium.App.Properties.setString('child', children[0].id);
 		}
 		Ti.App.fireEvent('databaseLoaded');  
-	});  
+	}
+	
+	Ti.App.addEventListener('loadFromCloudComplete', loadFromCloud);  
 }
 
 

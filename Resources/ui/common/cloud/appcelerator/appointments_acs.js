@@ -1,15 +1,20 @@
 var Cloud = require('ti.cloud');
 
-function getAppointmentsACS(query, entry_local_id)
+function getAppointmentsACS(query /*, entry_local_id */)
 {
 	Cloud.Objects.query({ classname: 'appointments', where: query }, 
 		function (e) {
     		if (e.success) {
-    			if(e.appointments.length == 0) return; 
     			for(var i=e.appointments.length-1;i > -1 ;i--) { 
 				    var appointment = e.appointments[i];
 				    
 				    if((getAppointmentByCloudIdLocal(appointment.id)).length > 0) continue;
+				    
+				    if(/^\d+$/.test(appointment.entry_id)) { 
+				    	deleteObjectACS('appointments', appointment.id);
+				    	 continue; 
+				    } 
+				    var entry_local_id = getEntryByCloudIdLocal(appointment.entry_id)[0].id;
 				    
 				    var doctor = e.appointments[i].doctor;
 				    var symptoms = e.appointments[i].symptoms?e.appointments[i].symptoms:[];
@@ -22,8 +27,7 @@ function getAppointmentsACS(query, entry_local_id)
 						insertSymptomForAppointmentLocal(appointment_local_id, symptoms[j]);
 					}
 				}
-				Ti.App.fireEvent('loadedAppointmentsFromCloud');
-				 
+				getActivitiesACS({ user_id: query.user_id, });
 			}
      		else alert('Error:\n' + ((e.error && e.message) || JSON.stringify(e)));
 	});

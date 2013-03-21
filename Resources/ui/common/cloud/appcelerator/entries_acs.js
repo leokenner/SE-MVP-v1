@@ -1,22 +1,34 @@
 var Cloud = require('ti.cloud');
 
-function getEntriesACS(query, record_local_id, latest_date, latest_time)
+function getEntriesACS(query /*, record_local_id, latest_date, latest_time */)
 {
 	Cloud.Objects.query({ classname: 'entries', where: query }, 
 		function (e) {
     		if (e.success) {
-    			if(e.entries.length == 0) return; 
+    			if(e.entries.length == 0) {
+    			//	Ti.App.fireEvent('loadFromCloudComplete');
+    			//	return;
+    			} 
     			for(var i=e.entries.length-1;i > -1 ;i--) { 
 				    var entry = e.entries[i];
 				    
 				    if((getEntryByCloudIdLocal(entry.id)).length > 0) continue;
 				    
-					var entry_local_id = insertEntryLocal(record_local_id, entry.main_entry, entry.date, entry.location);
+				    var record = getRecordByCloudIdLocal(entry.record_id);
+				    record = record[0];
+				    
+				    if(/^\d+$/.test(entry.entry_id)) { 
+				    	deleteObjectACS('entries', entry.id);
+				    	 continue; 
+				    }
+				    
+					var entry_local_id = insertEntryLocal(record.id, entry.main_entry, entry.date, entry.location);
 					updateEntryCloudIdLocal(entry_local_id, entry.id);
-					updateRecordLocal(record_local_id, entry_local_id, 'entry', latest_date, latest_time);
-					getAppointmentsACS({ user_id: query.user_id, entry_id: entry.id, }, entry_local_id);
+					updateRecordLocal(record.id, entry_local_id, 'entry', record.latest_date, record.latest_time);
+					//getAppointmentsACS({ user_id: query.user_id, entry_id: entry.id, }, entry_local_id);
 					
 				}
+				getAppointmentsACS({ user_id: query.user_id, });
 			}
      		else alert('Error:\n' + ((e.error && e.message) || JSON.stringify(e)));
 	});

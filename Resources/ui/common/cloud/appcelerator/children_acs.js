@@ -6,13 +6,18 @@ function getChildrenACS(query)
 		function (e) {
     		if (e.success) {
     			if(e.children.length == 0) { 
-    				Ti.App.fireEvent('loadFromCloudComplete');
-    				return;
+    			//	Ti.App.fireEvent('loadFromCloudComplete');
+    			//	return;
     			}
     			for(var i=e.children.length-1;i > -1 ;i--) {
 				    var child = e.children[i];
 				    
 				    if((getChildByCloudIdLocal(child.id)).length > 0) continue;
+				    
+				    if(/^\d+$/.test(child.user_id)) { 
+				    	deleteObjectACS('children', child.id);
+				    	 continue; 
+				    }
 				    
 				    var relationships = e.children[i].relationships?e.children[i].relationships:[];
 				    child.sex = child.sex?'"'+child.sex+'"':null;
@@ -23,8 +28,11 @@ function getChildrenACS(query)
 					for(var j=0; j < relationships.length; j++) {
 						insertRelationshipLocal(child_local_id,Titanium.App.Properties.getString('user'),relationships[j].relation);
 					}
-					getRecordsACS({ user_id: query.user_id, child_id: child.id }, child_local_id);
+					//getRecordsACS({ user_id: query.user_id, child_id: child.id }, child_local_id);
 				}
+				//Ti.App.fireEvent('loadChildrenFromCloudComplete');
+				getRecordsACS({ user_id: query.user_id, });
+				
 			}
      		else alert('Error:\n' + ((e.error && e.message) || JSON.stringify(e)));
 	});

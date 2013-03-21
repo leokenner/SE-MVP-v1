@@ -1,16 +1,21 @@
 var Cloud = require('ti.cloud');
 
-function getActivitiesACS()
+function getActivitiesACS(query)
 {
 	var user = getUserLocal(Titanium.App.Properties.getString('user'));
 	
-	Cloud.Objects.query({ classname: 'activities', where: { user_id: user[0].cloud_id } }, 
+	Cloud.Objects.query({ classname: 'activities', where: query }, 
 		function (e) {
     		if (e.success) { 
     			for(var i=e.activities.length-1;i > -1 ;i--) { 
 				    var activity = e.activities[i];
 				    
 				    if((getActivityByCloudIdLocal(activity.id)).length > 0) continue;
+				    
+				    if(/^\d+$/.test(activity.entry_id)) { 
+				    	deleteObjectACS('activities', activity.id);
+				    	 continue; 
+				    }
 				    
 				    var goals = e.activities[i].goals?e.activities[i].goals:[];
 				    
@@ -33,7 +38,7 @@ function getActivitiesACS()
 						insertGoalForActivityLocal(activity_local_id, goals[j]);
 					}
 				}
-				getTreatmentsACS(); 
+				getTreatmentsACS({ user_id: query.user_id, }); 
 			}
      		else alert('Error:\n' + ((e.error && e.message) || JSON.stringify(e)));
 	});
