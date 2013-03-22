@@ -137,8 +137,8 @@ function completeRecordsTableView()
 					row.setHeight(view.height+40);
 				});
 				
-				var section = table.data[0]?table.data[0]:null
-				var temp_rows = section?section.rows:[];
+				var section = table.data[0]?table.data[0]:Titanium.UI.createTableViewSection();
+				var temp_rows = table.data[0]?table.data[0].getRows():[];
 				temp_rows.unshift(row);
 				section.rows = temp_rows;
 				table.deleteSection(0);

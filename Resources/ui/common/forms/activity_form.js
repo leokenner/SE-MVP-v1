@@ -12,6 +12,7 @@ var navGroupWindow = input.navGroupWindow;
 
 var activity = {
 		id: input.activity.id?input.activity.id:null,
+		cloud_id: input.activity.cloud_id?input.activity.cloud_id:null,
 		entry_id: input.activity.entry_id?input.activity.entry_id:null,
 		appointment_id: input.activity.appointment_id?input.activity.appointment_id:null,
 		main_actvity: input.activity.main_activity?input.activity.main_activity:null,
@@ -22,6 +23,7 @@ var activity = {
 		goals: input.activity.goals?input.activity.goals:[],
 		end_notes: input.activity.end_notes?input.activity.end_notes:null,
 		successful: input.activity.successful?input.activity.successful:false,
+		facebook_id: input.activity.facebook_id?input.activity.facebook_id:null,
 	}
 	
 	var goals_string='';
@@ -29,6 +31,9 @@ var activity = {
 		goals_string += activity.goals[i];
 		if(i != activity.goals.length -1) goals_string += ', ';
 	}
+	
+	var share_background_color = activity.facebook_id?'#CCC':
+								(!activity.successful)?'#CCC':(!Titanium.Network.online)?'#CCC':(!Titanium.Facebook.loggedIn)?'#CCC':'blue';
 
 var window = Titanium.UI.createWindow({
   backgroundColor:'white',
@@ -108,6 +113,8 @@ save_btn.addEventListener('click', function() {
 		if(endNotes_field.value != null || endNotes_field.value.length > 1) updateActivityEndNotes(activity.id,endNotes_field.value);
 		updateRecordTimesForEntryLocal(activity.entry_id,timeFormatted(new Date()).date,timeFormatted(new Date()).time);
 		
+		activity.start_date = start_date.text;
+		activity.end_date = end_date.text;
 		activity.main_activity = activity_field.value;
 		activity.frequency = frequency.text;
 		activity.location = location.value;
@@ -165,16 +172,93 @@ var table = Ti.UI.createTableView({
 	sectionOutcome.rows[0].add(success_title);
 	sectionOutcome.rows[0].add(successful_switcher);
 	
+	successful_switcher.addEventListener('change', function() {
+		if(successful_switcher.value == true && Titanium.Network.online && 
+			Titanium.Facebook.loggedIn && activity.facebook_id == null) { 
+			sectionShare.rows[0].backgroundColor = 'blue';
+			return;
+		}
+		sectionShare.rows[0].backgroundColor = '#CCC';
+		
+	});
+	
 	var sectionEndNotes = Ti.UI.createTableViewSection({ headerTitle: 'Observations?' });
 	sectionEndNotes.add(Ti.UI.createTableViewRow({ height: 90, selectedBackgroundColor: 'white' }));
 	var endNotes_field = Titanium.UI.createTextArea({ value: activity.end_notes, width: '100%', top: 5, font: { fontSize: 17 }, height: 70, borderRadius: 10 });
 	sectionEndNotes.rows[0].add(endNotes_field);
 	
+
+	var sectionShare = Ti.UI.createTableViewSection();
+	sectionShare.add(Ti.UI.createTableViewRow({ backgroundColor: share_background_color, }));
+	sectionShare.rows[0].add(Ti.UI.createLabel({ text: 'Share Activity on Facebook', color: 'white', font: { fontWeight: 'bold', }, }));
+	
+	sectionShare.addEventListener('click', function() {
+		if(!Titanium.Network.online) {
+			alert('Sorry, an internet connection is required to share on Facebook');
+			return;
+		}
+		if(!Titanium.Facebook.loggedIn) {
+			alert('Sorry, it seems like you are not logged into Facebook');
+			return;
+		}
+		if(activity.facebook_id) {
+			alert('This activity has already been shared on facebook');
+			return;
+		}
+		if(!successful_switcher.value) {
+			alert('You must declare an activity successful in order to be able to share it on Facebook');
+			return;
+		}
+		var child = getChildLocal(Titanium.App.Properties.getString('child'));
+		child = child[0];
+		
+		var share_goals = goals_field.value.split(',');
+		
+		if(activity.appointment_id) {
+			var doctor_name = getDoctorByAppointmentLocal(activity.appointment_id)[0].name;
+			var description = child.first_name+" successfully completed an activity and achieved the " + share_goals.length + 
+							  " goals as set by Dr. "+doctor_name;
+		}
+		else {
+			var description = child.first_name+" successfully completed an activity and achieved the " + share_goals.length + 
+							  " goals as set by me";
+		}
+		
+		var data = {
+   			link : "http://www.starsearth.com",
+		    name : "Activity successfully completed",
+		    message : "By: "+child.first_name+" "+child.last_name,
+		    caption : "By: "+child.first_name+" "+child.last_name,
+		    picture : "http://developer.appcelerator.com/assets/img/DEV_titmobile_image.png",
+		    description : description,
+		}
+		
+		Titanium.Facebook.dialog("feed", data, function(e) {
+		    if(e.success && e.result) {
+		    	sectionShare.rows[0].backgroundColor = '#CCC';
+		    	activity.facebook_id = e.result.split('=')[1];
+		    	updateActivityFacebookId(activity.id, '"'+activity.facebook_id+'"');
+		        //alert("Success! New Post ID: " + e.result); starts with post_id=
+		    } else {
+		        if(e.error) {
+		            alert(e.error);
+		        } else {
+		            alert("Dialog closed");
+		        }
+		    }
+		});
+	});
+	
 	var sectionDelete = Ti.UI.createTableViewSection();
-	sectionDelete.add(Ti.UI.createTableViewRow({ backgroundColor: 'red' }));
+	sectionDelete.add(Ti.UI.createTableViewRow({ backgroundColor: activity.id?'red':'#CCC', 
+												}));
 	sectionDelete.rows[0].add(Ti.UI.createLabel({ text: 'Delete Activity', color: 'white', font: { fontWeight: 'bold', }, }));
 	
 	sectionDelete.addEventListener('click', function() {
+		if(!activity.id) {
+			alert('This activity has not been saved. If you wish to delete it, simply press cancel at the top left corner');
+			return;
+		}
 	var confirm = Titanium.UI.createAlertDialog({ title: 'Are you sure?', 
 								message: 'This cannot be undone', 
 								buttonNames: ['Yes','No'], cancel: 1 });
@@ -186,7 +270,9 @@ var table = Ti.UI.createTableView({
 
   			 switch (g.index) {
      		 case 0: 
-				deleteActivityLocal(activity.id); 
+     		    activity.cloud_id = activity.cloud_id?activity.cloud_id:getActivityLocal(activity.id)[0].cloud_id; 
+				deleteActivityLocal(activity.id);
+				deleteObjectACS('activities', activity.cloud_id);
 				window.result = -1;
 				input.navGroupWindow.getChildren()[0].close(window);
       			break;
@@ -198,7 +284,7 @@ var table = Ti.UI.createTableView({
 		confirm.show();
 	});
 	
-	table.data = [sectionDetails, sectionGoals, sectionActivity, sectionOutcome, sectionEndNotes, sectionDelete];
+	table.data = [sectionDetails, sectionGoals, sectionActivity, sectionOutcome, sectionEndNotes, sectionShare, sectionDelete];
 	
 	window.add(table);
 	

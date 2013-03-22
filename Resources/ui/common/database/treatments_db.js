@@ -5,7 +5,7 @@ function initTreatmentsDBLocal()
 {
 	Ti.include('ui/common/database/database.js');
 	
-	db.execute('CREATE TABLE IF NOT EXISTS treatments (ID INTEGER PRIMARY KEY AUTOINCREMENT, CLOUD_ID TEXT, ENTRY_ID INTEGER, APPOINTMENT_ID INTEGER, START_DATE TEXT NOT NULL,END_DATE TEXT NOT NULL,MEDICATION TEXT,DOSAGE TEXT, FREQUENCY TEXT, SUCCESSFUL INTEGER, FOREIGN KEY(ENTRY_ID) REFERENCES entries (ID), FOREIGN KEY(APPOINTMENT_ID) REFERENCES appointments (ID))');
+	db.execute('CREATE TABLE IF NOT EXISTS treatments (ID INTEGER PRIMARY KEY AUTOINCREMENT, CLOUD_ID TEXT, ENTRY_ID INTEGER, APPOINTMENT_ID INTEGER, START_DATE TEXT NOT NULL,END_DATE TEXT NOT NULL,MEDICATION TEXT,DOSAGE TEXT, FREQUENCY TEXT, SUCCESSFUL INTEGER, FACEBOOK_ID TEXT, FOREIGN KEY(ENTRY_ID) REFERENCES entries (ID), FOREIGN KEY(APPOINTMENT_ID) REFERENCES appointments (ID))');
 	db.execute('CREATE TABLE IF NOT EXISTS treatment_symptoms (TREATMENT_ID INTEGER NOT NULL, SYMPTOM TEXT NOT NULL, FOREIGN KEY(TREATMENT_ID) REFERENCES treatments (ID))');
 	db.execute('CREATE TABLE IF NOT EXISTS treatment_sideEffects (TREATMENT_ID INTEGER NOT NULL, SIDE_EFFECT TEXT NOT NULL, FOREIGN KEY(TREATMENT_ID) REFERENCES treatments (ID))');
 }
@@ -14,9 +14,10 @@ function initTreatmentsDBLocal()
 //Removed quotes from entry_id and appointment_id to allow for null values
 function insertTreatmentLocal(entry_id, appointment_id, start_date, end_date, medication, dosage, frequency) 
 { 
-	var sql = "INSERT INTO treatments (entry_id, appointment_id, start_date, end_date, medication, dosage, frequency) VALUES ("; 
+	var sql = "INSERT INTO treatments (entry_id, appointment_id, facebook_id, start_date, end_date, medication, dosage, frequency) VALUES ("; 
 	sql = sql + "" + entry_id + ", ";
 	sql = sql + "" + appointment_id + ", ";
+	sql = sql + "" + null + ", ";
 	sql = sql + "'" + start_date.replace("'", "''") + "', ";
 	sql = sql + "'" + end_date.replace("'", "''") + "', ";
 	sql = sql + "'" + medication.replace("'", "''") + "', ";
@@ -74,6 +75,7 @@ function getAllTreatmentsLocal()
 		   	  dosage: resultSet.fieldByName('dosage'),
 		   	  frequency: resultSet.fieldByName('frequency'),
 		   	  successful: resultSet.fieldByName('successful'),
+		   	  facebook_id: resultSet.fieldByName('facebook_id'),
 	        });
 	resultSet.next();
     }
@@ -100,6 +102,7 @@ function getTreatmentsForEntryLocal(entry_id)
 		   	  dosage: resultSet.fieldByName('dosage'),
 		   	  frequency: resultSet.fieldByName('frequency'),
 		   	  successful: resultSet.fieldByName('successful'),
+		   	  facebook_id: resultSet.fieldByName('facebook_id'),
 	        });
 	resultSet.next();
     }
@@ -126,6 +129,7 @@ function getTreatmentByCloudIdLocal(cloud_id)
 		   	  dosage: resultSet.fieldByName('dosage'),
 		   	  frequency: resultSet.fieldByName('frequency'),
 		   	  successful: resultSet.fieldByName('successful'),
+		   	  facebook_id: resultSet.fieldByName('facebook_id'),
 	        });
 	resultSet.next();
     }
@@ -153,6 +157,7 @@ function getTreatmentsForAppointmentLocal(appointment_id)
 		   	  dosage: resultSet.fieldByName('dosage'),
 		   	  frequency: resultSet.fieldByName('frequency'),
 		   	  successful: resultSet.fieldByName('successful'),
+		   	  facebook_id: resultSet.fieldByName('facebook_id'),
 	        });
 	resultSet.next();
     }
@@ -180,6 +185,7 @@ function getTreatmentLocal(treatment_id)
 		   	  dosage: resultSet.fieldByName('dosage'),
 		   	  frequency: resultSet.fieldByName('frequency'),
 		   	  successful: resultSet.fieldByName('successful'),
+		   	  facebook_id: resultSet.fieldByName('facebook_id'),
 	        });
 	resultSet.next();
     }
@@ -237,6 +243,13 @@ function updateTreatmentLocal(treatment_id, start_date, end_date, medication, do
 	return db.lastInsertRowId; 
 }
 
+function updateTreatmentFacebookId(treatment_id, facebook_id)
+{
+	var sql = "UPDATE treatments SET FACEBOOK_ID="+facebook_id+" ";
+	sql = sql + "WHERE ID='"+treatment_id+"'";
+	db.execute(sql);
+}
+
 function updateTreatmentSuccessStatus(treatment_id, success_status)
 {
 	if(success_status == true) {
@@ -245,7 +258,7 @@ function updateTreatmentSuccessStatus(treatment_id, success_status)
 	else {
 		var sql = "UPDATE treatments SET SUCCESSFUL=0 ";
 	}
-	//var sql = "UPDATE treatments SET SUCCESSFUL='"+success_status+"' ";
+
 	sql = sql + "WHERE ID='"+treatment_id+"'"; 
 	
 	db.execute(sql);

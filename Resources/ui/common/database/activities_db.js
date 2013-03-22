@@ -5,7 +5,7 @@ function initActivitiesDBLocal()
 {
 	Ti.include('ui/common/database/database.js');
 	
-	db.execute('CREATE TABLE IF NOT EXISTS activities (ID INTEGER PRIMARY KEY AUTOINCREMENT, CLOUD_ID TEXT, ENTRY_ID INTEGER, APPOINTMENT_ID INTEGER, MAIN_ACTIVITY TEXT NOT NULL, START_DATE TEXT NOT NULL, END_DATE TEXT NOT NULL, FREQUENCY TEXT, LOCATION TEXT, SUCCESSFUL INTEGER, END_NOTES TEXT, FOREIGN KEY(ENTRY_ID) REFERENCES entries (ID), FOREIGN KEY(APPOINTMENT_ID) REFERENCES appointments (ID))');
+	db.execute('CREATE TABLE IF NOT EXISTS activities (ID INTEGER PRIMARY KEY AUTOINCREMENT, CLOUD_ID TEXT, ENTRY_ID INTEGER, APPOINTMENT_ID INTEGER, MAIN_ACTIVITY TEXT NOT NULL, START_DATE TEXT NOT NULL, END_DATE TEXT NOT NULL, FREQUENCY TEXT, LOCATION TEXT, SUCCESSFUL INTEGER, END_NOTES TEXT, FACEBOOK_ID TEXT, FOREIGN KEY(ENTRY_ID) REFERENCES entries (ID), FOREIGN KEY(APPOINTMENT_ID) REFERENCES appointments (ID))');
 	db.execute('CREATE TABLE IF NOT EXISTS activity_goals (ACTIVITY_ID INTEGER NOT NULL, GOAL TEXT NOT NULL, FOREIGN KEY(ACTIVITY_ID) REFERENCES activities (ID))');
 }
 
@@ -13,13 +13,14 @@ function initActivitiesDBLocal()
 //removed the quotes from entry_id and appointment_id to allow for null values
 function insertActivityLocal(entry_id, appointment_id, main_activity, start_date, end_date, location, frequency) 
 { 
-	var sql = "INSERT INTO activities (entry_id, appointment_id, main_activity, start_date, end_date, location, frequency) VALUES ("; 
+	var sql = "INSERT INTO activities (entry_id, appointment_id, main_activity, start_date, end_date, location, facebook_id, frequency) VALUES ("; 
 	sql = sql + "" + entry_id + ", ";
 	sql = sql + "" + appointment_id + ", ";
 	sql = sql + "'" + main_activity.replace("'", "''") + "', ";
 	sql = sql + "'" + start_date.replace("'", "''") + "', ";
 	sql = sql + "'" + end_date.replace("'", "''") + "', ";
 	sql = sql + "'" + location + "', ";
+	sql = sql + "" + null + ", ";
 	sql = sql + "'" + frequency.replace("'", "''") + "')";
 	db.execute(sql); 
 	
@@ -64,6 +65,7 @@ function getAllActivitiesLocal()
 		   	  location: resultSet.fieldByName('location'),
 		   	  successful: resultSet.fieldByName('successful'),
 		   	  end_notes: resultSet.fieldByName('end_notes'),
+		   	  facebook_id: resultSet.fieldByName('facebook_id'),
 	        });
 	resultSet.next();
     }
@@ -91,6 +93,7 @@ function getActivitiesForEntryLocal(entry_id)
 		   	  location: resultSet.fieldByName('location'),
 		   	  successful: resultSet.fieldByName('successful'),
 		   	  end_notes: resultSet.fieldByName('end_notes'),
+		   	  facebook_id: resultSet.fieldByName('facebook_id'),
 	        });
 	resultSet.next();
     }
@@ -119,6 +122,7 @@ function getActivityByCloudIdLocal(cloud_id)
 		   	  location: resultSet.fieldByName('location'),
 		   	  successful: resultSet.fieldByName('successful'),
 		   	  end_notes: resultSet.fieldByName('end_notes'),
+		   	  facebook_id: resultSet.fieldByName('facebook_id'),
 	        });
 	resultSet.next();
     }
@@ -147,6 +151,7 @@ function getActivitiesForAppointmentLocal(appointment_id)
 		   	  location: resultSet.fieldByName('location'),
 		   	  successful: resultSet.fieldByName('successful'),
 		   	  end_notes: resultSet.fieldByName('end_notes'),
+		   	  facebook_id: resultSet.fieldByName('facebook_id'),
 	        });
 	resultSet.next();
     }
@@ -175,6 +180,7 @@ function getActivityLocal(activity_id)
 		   	  location: resultSet.fieldByName('location'),
 		   	  successful: resultSet.fieldByName('successful'),
 		   	  end_notes: resultSet.fieldByName('end_notes'),
+		   	  facebook_id: resultSet.fieldByName('facebook_id'),
 	        });
 	resultSet.next();
     }
@@ -231,6 +237,14 @@ function updateActivitySuccessStatus(activity_id, success_status)
 function updateActivityEndNotes(activity_id, end_notes)
 {
 	var sql = "UPDATE activities SET END_NOTES='"+end_notes+"'";
+	sql = sql + "WHERE ID='"+activity_id+"'";
+	db.execute(sql);
+}
+
+function updateActivityFacebookId(activity_id, facebook_id)
+{
+	var sql = "UPDATE activities SET FACEBOOK_ID="+facebook_id+" ";
+	sql = sql + "WHERE ID='"+activity_id+"'";
 	db.execute(sql);
 }
 

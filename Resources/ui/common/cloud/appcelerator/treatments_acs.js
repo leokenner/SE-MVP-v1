@@ -12,7 +12,10 @@ function getTreatmentsACS(query)
     			for(var i=e.treatments.length-1;i > -1 ;i--) { 
 				    var treatment = e.treatments[i];
 				    
-				    if((getTreatmentByCloudIdLocal(treatment.id)).length > 0) continue;
+				    if((getTreatmentByCloudIdLocal(treatment.id)).length > 0) {
+				    	updateObjectACS('treatments', treatment.id, treatment);
+				    	continue;
+				    }
 				    
 				    if(/^\d+$/.test(treatment.entry_id)) { 
 				    	deleteObjectACS('treatments', treatment.id);
@@ -21,6 +24,9 @@ function getTreatmentsACS(query)
 				    
 				    var symptoms = e.treatments[i].symptoms?e.treatments[i].symptoms:[];
 				    var side_effects = e.treatments[i].side_effects?e.treatments[i].side_effects:[];
+				    
+				    treatment.facebook_id = treatment.facebook_id?'"'+treatment.facebook_id+'"':null;
+				    
 				    if(treatment.appointment_id != undefined && treatment.appointment_id != null) {
 				    	var appointment = getAppointmentByCloudIdLocal(treatment.appointment_id);
 				    	treatment.entry_id = null;  
@@ -34,12 +40,13 @@ function getTreatmentsACS(query)
 																	treatment.end_date, treatment.medication, treatment.dosage, treatment.frequency);
 					}
 					updateTreatmentSuccessStatus(treatment_local_id, treatment.successful);
+					updateTreatmentFacebookId(treatment_local_id, treatment.facebook_id);
 					updateTreatmentCloudIdLocal(treatment_local_id, treatment.id);
 					for(var j=0; j < symptoms.length; j++) {
 						insertSymptomForTreatmentLocal(treatment_local_id, symptoms[j]);
 					}
 					for(var j=0; j < side_effects.length; j++) {
-						insertSideEffectForTreatmentLocal(treatment_local_id, side_effect[j]);
+						insertSideEffectForTreatmentLocal(treatment_local_id, side_effects[j]);
 					}
 				}
 				Ti.App.fireEvent('loadFromCloudComplete'); 

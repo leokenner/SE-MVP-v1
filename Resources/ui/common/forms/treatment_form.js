@@ -14,6 +14,7 @@ var navGroupWindow = input.navGroupWindow;
 
 var treatment = {
 		id: input.treatment.id?input.treatment.id:null,
+		cloud_id: input.treatment.cloud_id?input.treatment.cloud_id:null,
 		entry_id: input.treatment.entry_id?input.treatment.entry_id:null,
 		appointment_id: input.treatment.appointment_id?input.treatment.appointment_id:null,
 		start_date: input.treatment.start_date?input.treatment.start_date:timeFormatted(new Date).date,
@@ -24,6 +25,7 @@ var treatment = {
 		symptoms: input.treatment.symptoms?input.treatment.symptoms:[],
 		sideEffects: input.treatment.sideEffects?input.treatment.sideEffects:[],
 		successful: input.treatment.successful?input.treatment.successful:false,
+		facebook_id: input.treatment.facebook_id?input.treatment.facebook_id:null,
 	}
 	
 	var symptoms_string='';
@@ -37,6 +39,9 @@ var treatment = {
 		sideEffects_string += treatment.sideEffects[i];
 		if(i != treatment.sideEffects.length -1) sideEffects_string += ', ';
 	}
+	
+	var share_background_color = treatment.facebook_id?'#CCC':
+								(!treatment.successful)?'#CCC':(!Titanium.Network.online)?'#CCC':(!Titanium.Facebook.loggedIn)?'#CCC':'blue';
 
 
 var window = Titanium.UI.createWindow({
@@ -94,6 +99,7 @@ save_btn.addEventListener('click', function() {
 				}
 				createObjectACS('treatments', { id: treatment.id, start_date: start_date.text, end_date: end_date.text, 
 												medication: medication.value, dosage: dosage.value, frequency: frequency.text, });
+
 			}
 			else {
 				updateTreatmentLocal(treatment.id,start_date.text,end_date.text,medication.value,dosage.value,frequency.text);
@@ -132,6 +138,8 @@ save_btn.addEventListener('click', function() {
 			//var record_incident_id = getAppointmentLocal(treatment.appointment_id)[0].incident_id;
 			updateRecordTimesForEntryLocal(treatment.entry_id,timeFormatted(new Date()).date,timeFormatted(new Date()).time);
 			
+			treatment.start_date = start_date.text;
+			treatment.end_date = end_date.text;
 			treatment.medication = medication.value;
 			treatment.dosage = dosage.value;
 			treatment.frequency = frequency.text;
@@ -191,16 +199,96 @@ var successful_switcher = Titanium.UI.createSwitch({ value: treatment.successful
 sectionOutcome.rows[0].add(success_title);
 sectionOutcome.rows[0].add(successful_switcher);
 
+successful_switcher.addEventListener('change', function() {
+		if(successful_switcher.value == true && Titanium.Network.online && 
+			Titanium.Facebook.loggedIn && treatment.facebook_id == null) { 
+			sectionShare.rows[0].backgroundColor = 'blue';
+			return;
+		}
+		sectionShare.rows[0].backgroundColor = '#CCC';
+	});
+
 var sectionSideEffects = Ti.UI.createTableViewSection({ headerTitle: 'Side effects(list using commas)' });
 sectionSideEffects.add(Ti.UI.createTableViewRow({ height: 90, selectedBackgroundColor: 'white' }));
 var sideEffects_field = Titanium.UI.createTextArea({ hintText: 'Seperate each entry by comma', value: sideEffects_string, width: '100%', top: 5, font: { fontSize: 17 }, height: 70, borderRadius: 10 });
 sectionSideEffects.rows[0].add(sideEffects_field);
 
+var sectionShare = Ti.UI.createTableViewSection();
+	sectionShare.add(Ti.UI.createTableViewRow({ backgroundColor: share_background_color, }));
+	sectionShare.rows[0].add(Ti.UI.createLabel({ text: 'Share Treatment on Facebook', color: 'white', font: { fontWeight: 'bold', }, }));
+	
+	sectionShare.addEventListener('click', function() {
+		if(!Titanium.Network.online) {
+			alert('Sorry, an internet connection is required to share on Facebook');
+			return;
+		}
+		if(!Titanium.Facebook.loggedIn) {
+			alert('Sorry, it seems like you are not logged into Facebook');
+			return;
+		}
+		if(treatment.facebook_id) {
+			alert('This treatment has already been shared on facebook');
+			return;
+		}
+		if(!successful_switcher.value) {
+			alert('You must declare a treatment successful in order to be able to share it on Facebook');
+			return;
+		}
+		
+		var child = getChildLocal(Titanium.App.Properties.getString('child'));
+		child = child[0];
+		
+		var share_symptoms = symptoms_field.value.split(',');
+		
+		var fb_endDate = new Date(end_date.text);
+		var fb_startDate = new Date(start_date.text);
+		var days = parseInt((fb_endDate-fb_startDate)/(24*3600*1000));
+		
+		if(treatment.appointment_id) {
+			var doctor_name = getDoctorByAppointmentLocal(treatment.appointment_id)[0].name;
+			var description = child.first_name+" successfully completed a treatment of " + 
+								treatment.medication + " over " + days + " days as prescribed by Dr. " + doctor_name;
+		}
+		else {
+			var description = child.first_name+" successfully completed a treatment of " + treatment.medication + 
+								" over " + days + " days and was cured of " + share_symptoms.length + " symptoms"; 
+		}
+		
+		var data = {
+   			link : "http://www.starsearth.com",
+		    name : "Treatment successfully completed",
+		    message : "By: "+child.first_name+" "+child.last_name,
+		    caption : "By: "+child.first_name+" "+child.last_name,
+		    picture : "http://developer.appcelerator.com/assets/img/DEV_titmobile_image.png",
+		    description : description,
+		}
+		
+		Titanium.Facebook.dialog("feed", data, function(e) {
+		    if(e.success && e.result) {
+		    	sectionShare.rows[0].backgroundColor = '#CCC';
+		    	treatment.facebook_id = e.result.split('=')[1];
+		    	updateTreatmentFacebookId(treatment.id, '"'+treatment.facebook_id+'"');
+		        //alert("Success! New Post ID: " + e.result); Begins with post_id= 
+		    } else {
+		        if(e.error) {
+		            alert(e.error);
+		        } else {
+		            alert("Dialog closed");
+		        }
+		    }
+		});
+	});
+
 var sectionDelete = Ti.UI.createTableViewSection();
-sectionDelete.add(Ti.UI.createTableViewRow({ backgroundColor: 'red' }));
+sectionDelete.add(Ti.UI.createTableViewRow({ backgroundColor: treatment.id?'red':'#CCC', 
+											}));
 sectionDelete.rows[0].add(Ti.UI.createLabel({ text: 'Delete Treatment', color: 'white', font: { fontWeight: 'bold', },  }));
 
 sectionDelete.addEventListener('click', function() {
+	if(!treatment.id) {
+		alert('This treatment has not been saved. If you wish to delete it, simply press cancel at the top left corner');
+		return;
+	}
 	var confirm = Titanium.UI.createAlertDialog({ title: 'Are you sure?', 
 								message: 'This cannot be undone', 
 								buttonNames: ['Yes','No'], cancel: 1 });
@@ -211,8 +299,10 @@ sectionDelete.addEventListener('click', function() {
 
 
   			 switch (g.index) {
-     		 case 0: 
-				deleteTreatmentLocal(treatment.id); 
+     		 case 0:
+     		  	treatment.cloud_id = treatment.cloud_id?treatment.cloud_id:getTreatmentLocal(treatment.id)[0].cloud_id;
+				deleteTreatmentLocal(treatment.id);			
+				deleteObjectACS('treatments', treatment.cloud_id);
 				window.result = -1;
 				input.navGroupWindow.getChildren()[0].close(window);
       			break;
@@ -224,7 +314,7 @@ sectionDelete.addEventListener('click', function() {
 		confirm.show();
 });
 
-table.data = [sectionDetails,sectionSymptoms, sectionOutcome, sectionSideEffects, sectionDelete ];
+table.data = [sectionDetails,sectionSymptoms, sectionOutcome, sectionSideEffects, sectionShare, sectionDelete ];
 window.add(table);
 
 //Functions that works with the modal picker to change the date

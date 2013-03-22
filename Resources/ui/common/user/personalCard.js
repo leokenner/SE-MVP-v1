@@ -53,7 +53,7 @@ function personalCard() {
 		});
 		
 	right_btn.addEventListener('click', function() { 
-			var profile = require('ui/common/forms/profile_form');
+		/*	var profile = require('ui/common/forms/profile_form');
 			profile = new profile(child);
 			profile.open();
 			
@@ -66,7 +66,26 @@ function personalCard() {
 					age.text = child.date_of_birth?calculateAge(new Date(child.date_of_birth),new Date()):'Unknown';
 					diagnosis.text = child.diagnosis?child.diagnosis:'Unknown';
 				}
-			}); 
+			}); */
+			var data = {
+   //link : "http://www.appcelerator.com",
+    name : "Random Name",
+    message : "Random message",
+    caption : "Appcelerator Titanium Mobile",
+    picture : "http://developer.appcelerator.com/assets/img/DEV_titmobile_image.png",
+    description : "Random completely totally utterly irrevalant description just to take up space"
+};
+Titanium.Facebook.dialog("feed", data, function(e) {
+    if(e.success && e.result) {
+        alert("Success! New Post ID: " + e.result);
+    } else {
+        if(e.error) {
+            alert(e.error);
+        } else {
+            alert("User canceled dialog.");
+        }
+    }
+});
 		
 	});	
 		

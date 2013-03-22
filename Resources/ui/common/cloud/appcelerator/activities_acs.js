@@ -10,7 +10,10 @@ function getActivitiesACS(query)
     			for(var i=e.activities.length-1;i > -1 ;i--) { 
 				    var activity = e.activities[i];
 				    
-				    if((getActivityByCloudIdLocal(activity.id)).length > 0) continue;
+				    if((getActivityByCloudIdLocal(activity.id)).length > 0) {
+				    	updateObjectACS('activities', activity.id, activity);
+				    	continue;
+				    }
 				    
 				    if(/^\d+$/.test(activity.entry_id)) { 
 				    	deleteObjectACS('activities', activity.id);
@@ -18,6 +21,8 @@ function getActivitiesACS(query)
 				    }
 				    
 				    var goals = e.activities[i].goals?e.activities[i].goals:[];
+				    
+				    activity.facebook_id = activity.facebook_id?'"'+activity.facebook_id+'"':null;
 				    
 				    if(activity.appointment_id != null && activity.appointment_id != undefined) {
 				    	var appointment = getAppointmentByCloudIdLocal(activity.appointment_id);
@@ -33,6 +38,7 @@ function getActivitiesACS(query)
 					}
 					updateActivitySuccessStatus(activity_local_id, activity.successful);
 					updateActivityEndNotes(activity_local_id, activity.end_notes);
+					updateActivityFacebookId(activity_local_id, activity.facebook_id);
 					updateActivityCloudIdLocal(activity_local_id, activity.id);
 					for(var j=0; j < goals.length; j++) {
 						insertGoalForActivityLocal(activity_local_id, goals[j]);

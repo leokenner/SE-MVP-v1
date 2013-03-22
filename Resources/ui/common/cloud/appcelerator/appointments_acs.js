@@ -8,7 +8,10 @@ function getAppointmentsACS(query /*, entry_local_id */)
     			for(var i=e.appointments.length-1;i > -1 ;i--) { 
 				    var appointment = e.appointments[i];
 				    
-				    if((getAppointmentByCloudIdLocal(appointment.id)).length > 0) continue;
+				    if((getAppointmentByCloudIdLocal(appointment.id)).length > 0) {
+				    	updateObjectACS('appointments', appointment.id, appointment);
+				    	continue;
+				    }
 				    
 				    if(/^\d+$/.test(appointment.entry_id)) { 
 				    	deleteObjectACS('appointments', appointment.id);

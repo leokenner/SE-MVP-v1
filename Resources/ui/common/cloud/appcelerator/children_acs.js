@@ -12,7 +12,10 @@ function getChildrenACS(query)
     			for(var i=e.children.length-1;i > -1 ;i--) {
 				    var child = e.children[i];
 				    
-				    if((getChildByCloudIdLocal(child.id)).length > 0) continue;
+				    if((getChildByCloudIdLocal(child.id)).length > 0) {
+				    	updateObjectACS('children', child.id, child);
+				    	continue;
+				    }
 				    
 				    if(/^\d+$/.test(child.user_id)) { 
 				    	deleteObjectACS('children', child.id);

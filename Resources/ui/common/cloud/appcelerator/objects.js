@@ -44,7 +44,7 @@ function createObjectACS(objectName, object)
  * input: id of the object, the object in questions, the fields that need to be updated
  * output: the updated object if successful, null if unsuccessful
  */
-function updateObjectACS(id, object, fields)
+function updateObjectACS(objectName, id, fields)
 {
 	Cloud.Objects.update({
     		classname: object,

@@ -12,7 +12,10 @@ function getEntriesACS(query /*, record_local_id, latest_date, latest_time */)
     			for(var i=e.entries.length-1;i > -1 ;i--) { 
 				    var entry = e.entries[i];
 				    
-				    if((getEntryByCloudIdLocal(entry.id)).length > 0) continue;
+				    if((getEntryByCloudIdLocal(entry.id)).length > 0) {
+				    	updateObjectACS('entries', entry.id, entry);
+				    	continue;
+				    }
 				    
 				    var record = getRecordByCloudIdLocal(entry.record_id);
 				    record = record[0];

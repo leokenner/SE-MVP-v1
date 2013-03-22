@@ -59,8 +59,7 @@ if (Ti.version < 1.8 ) {
 		var leftWindow = require('ui/common/menus/leftMenu');
 		leftWindow = new leftWindow();
 		leftWindow.open();
-		if(mainTabGroup) mainTabGroup.close();
-		mainTabGroup = new tabGroup(new mainWindow()).open();
+		new tabGroup(new mainWindow()).open();
 	}); 
 	
 
