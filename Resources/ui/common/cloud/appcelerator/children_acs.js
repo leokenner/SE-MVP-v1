@@ -17,7 +17,7 @@ function getChildrenACS(query)
 				    	continue;
 				    }
 				    
-				    if(/^\d+$/.test(child.user_id)) { 
+				    if(child.user_id==null || child.user_id==undefined || /^\d+$/.test(child.user_id)) { 
 				    	deleteObjectACS('children', child.id);
 				    	 continue; 
 				    }

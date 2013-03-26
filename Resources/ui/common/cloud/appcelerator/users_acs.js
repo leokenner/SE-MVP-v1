@@ -56,7 +56,6 @@ function loginUserACS(email, password)
         	
     	} else {
         	alert('Error: \n' + ((e.error && e.message) || JSON.stringify(e)));
- 	       return null;
     	}
 	});
 

@@ -16,7 +16,7 @@ function leftMenu()
 	
 	var window = Titanium.UI.createWindow({
   		title: parent.first_name+' '+parent.last_name,
-  		barColor: 'blue',
+  		barColor: 'black',
   		top: 0,
   		left: 0,
   		width: 260,
@@ -27,15 +27,15 @@ function leftMenu()
 	navGroupWindow = new navGroupWindow(window);
 	
 	leftMenu_table = Ti.UI.createTableView({
-		backgroundColor: 'yellow',
-		borderColor: 'black',
+		backgroundColor: 'black',
+		borderColor: '#CCC',
 		rowHeight: 45
 	});
 	
 	
 	var sectionChildren = Ti.UI.createTableViewSection({ headerTitle: 'Children' });	
 	var sectionOther = Ti.UI.createTableViewSection({ headerTitle: ' ' });
-	var logout_row = Ti.UI.createTableViewRow({ title: 'Logout' });
+	var logout_row = Ti.UI.createTableViewRow({ title: 'Logout', color: 'white', });
 	sectionOther.add(logout_row);
 	leftMenu_table.data = [sectionChildren, sectionOther];
 	window.add(leftMenu_table);
@@ -51,7 +51,7 @@ function insertChildren()
     	for(var i=0;i<children.length;i++)
     	{    
     		var child = children[i];		
-    		tableViewRow[i] = Ti.UI.createTableViewRow();	
+    		tableViewRow[i] = Ti.UI.createTableViewRow({ color: 'white', });	
         	tableViewRow[i].title = child.first_name+' '+child.last_name;
         	tableViewRow[i].child_id = child.id;
         	tableViewRow[i].addEventListener('click', function(e) {
@@ -60,7 +60,7 @@ function insertChildren()
         		});      	
             sectionChildren.add(tableViewRow[i]); 
         }
-        var row = Ti.UI.createTableViewRow({ title: 'Create New Child' });
+        var row = Ti.UI.createTableViewRow({ title: 'Create New Child', color: 'white' });
         row.addEventListener('click', function() {
         	var row_id = insertChildLocal(Titanium.App.Properties.getString('user'), 'New','Child',null,null,null);
         	createObjectACS('children', { id: row_id, user_id: Titanium.App.Properties.getString('user'), first_name: 'New', last_name: 'Child', });
@@ -71,7 +71,7 @@ function insertChildren()
         leftMenu_table.data = [sectionChildren,sectionOther];
 }
 
-logout_row.addEventListener('click', function() {
+logout_row.addEventListener('click', function() {	
 	logout();
 });
 

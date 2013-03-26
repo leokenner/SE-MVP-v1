@@ -31,7 +31,7 @@ if (Ti.version < 1.8 ) {
 	var mainWindow;
 	var mainTabGroup=null;
 	var mainCover = require('ui/mainCover');
-	//var leftWindow = require('ui/common/menus/leftMenu');
+	var leftWindow=null;
 	var rightWindow = require('ui/common/menus/rightMenu');
 	var tabGroup = require('ui/handheld/ApplicationTabGroup');
 	if (isTablet) {
@@ -47,6 +47,7 @@ if (Ti.version < 1.8 ) {
 			mainWindow = require('ui/common/RecordsWindow');
 		}
 	}
+	var count=0;
 	
 	mainCover = new mainCover();
 	mainCover.open();
@@ -56,11 +57,19 @@ if (Ti.version < 1.8 ) {
 	});
 	
 	Ti.App.addEventListener('databaseLoaded', function() {
-		var leftWindow = require('ui/common/menus/leftMenu');
+		count++;
+		if(count > 1) return;
+		leftWindow = require('ui/common/menus/leftMenu');
 		leftWindow = new leftWindow();
 		leftWindow.open();
-		new tabGroup(new mainWindow()).open();
+		mainTabGroup = new tabGroup(new mainWindow());
+		mainTabGroup.open();
 	}); 
 	
+	Ti.App.addEventListener('logoutClicked', function() {
+		count=0;
+		leftWindow.close();
+		mainTabGroup.close();
+	});  
 
 })();

@@ -26,12 +26,20 @@ function getActivitiesACS(query)
 				    
 				    if(activity.appointment_id != null && activity.appointment_id != undefined) {
 				    	var appointment = getAppointmentByCloudIdLocal(activity.appointment_id);
+				    	if(appointment.length==0 || appointment[0].id==null || appointment[0].id==undefined) {
+				    		deleteObjectACS('activities', activity.id);
+				    		continue;
+				    	}
 				    	activity.entry_id = null; 
 						var activity_local_id = insertActivityLocal(activity.entry_id, '"'+appointment[0].id+'"', activity.main_activity, 
 																activity.start_date, activity.end_date, activity.location, activity.frequency);
 					}
 					else {
 						var entry = getEntryByCloudIdLocal(activity.entry_id);
+						if(entry.length==0 || entry[0].id==null || entry[0].id==undefined) {
+							deleteObjectACS('activities', activity.id);
+							continue;
+						}
 						activity.appointment_id = null;
 						var activity_local_id = insertActivityLocal('"'+entry[0].id+'"', activity.appointment_id, activity.main_activity, 
 																activity.start_date, activity.end_date, activity.location, activity.frequency);

@@ -29,12 +29,20 @@ function getTreatmentsACS(query)
 				    
 				    if(treatment.appointment_id != undefined && treatment.appointment_id != null) {
 				    	var appointment = getAppointmentByCloudIdLocal(treatment.appointment_id);
+				    	if(appointment.length == 0 || appointment[0].id==null || appointment[0].id==undefined) {
+				    		deleteObjectACS('treatments', treatment.id);
+				    		continue;
+				    	}
 				    	treatment.entry_id = null;  
 						var treatment_local_id = insertTreatmentLocal(treatment.entry_id, '"'+appointment[0].id+'"', treatment.start_date, 
 																	treatment.end_date, treatment.medication, treatment.dosage, treatment.frequency);
 					}
 					else {
 						var entry = getEntryByCloudIdLocal(treatment.entry_id);
+						if(entry.length == 0 || entry[0].id==null || entry[0].id==undefined) {
+				    		deleteObjectACS('treatments', treatment.id);
+				    		continue;
+				    	}
 						treatment.appointment_id = null;
 						var treatment_local_id = insertTreatmentLocal('"'+entry[0].id+'"', treatment.appointment_id, treatment.start_date, 
 																	treatment.end_date, treatment.medication, treatment.dosage, treatment.frequency);

@@ -259,7 +259,7 @@ var sectionShare = Ti.UI.createTableViewSection();
 		    name : "Treatment successfully completed",
 		    message : "By: "+child.first_name+" "+child.last_name,
 		    caption : "By: "+child.first_name+" "+child.last_name,
-		    picture : "http://developer.appcelerator.com/assets/img/DEV_titmobile_image.png",
+		    picture : "http://pcfrivesdedordogne.pcf.fr/sites/default/files/imagecache/image/arton1.png",
 		    description : description,
 		}
 		

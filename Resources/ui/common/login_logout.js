@@ -39,10 +39,9 @@ function logout()
 
 	if(Ti.Facebook.loggedIn) {
 		Ti.Facebook.logout();
-		var url = 'https://login.facebook.com';
-		var client = Titanium.Network.createHTTPClient();
-		client.clearCookies(url);
 	}
 	logoutUserACS();
+	
+	Ti.App.fireEvent('logoutClicked');
 	
 }

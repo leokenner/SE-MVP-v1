@@ -13,11 +13,15 @@ function getAppointmentsACS(query /*, entry_local_id */)
 				    	continue;
 				    }
 				    
-				    if(/^\d+$/.test(appointment.entry_id)) { 
+				    if(appointment.entry_id == null || appointment.entry_id == undefined || /^\d+$/.test(appointment.entry_id)) { 
 				    	deleteObjectACS('appointments', appointment.id);
 				    	 continue; 
 				    } 
 				    var entry_local_id = getEntryByCloudIdLocal(appointment.entry_id)[0].id;
+				    if(entry_local_id==null || entry_local_id==undefined) {
+				    	deleteObjectACS('appointments', appointment.id);
+				    	continue;
+				    }
 				    
 				    var doctor = e.appointments[i].doctor;
 				    var symptoms = e.appointments[i].symptoms?e.appointments[i].symptoms:[];

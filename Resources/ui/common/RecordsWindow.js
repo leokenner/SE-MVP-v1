@@ -14,9 +14,9 @@ function RecordsWindow() {
 	self.leftNavButton = leftNav_btn;
 	
 	var rightNav_btn = Ti.UI.createButton({
-		title: 'Log'
+		title: 'Help'
 	});
-	//self.rightNavButton = rightNav_btn; 
+	self.rightNavButton = rightNav_btn; 
 	
 	leftNav_btn.addEventListener('click',function(e){
 		if(leftNav_btn.title == 'Menu'){
@@ -46,7 +46,7 @@ function RecordsWindow() {
 			}));
 	});
 	
-	rightNav_btn.addEventListener('click',function(e){
+/*	rightNav_btn.addEventListener('click',function(e){
 		if(rightNav_btn.title != 'Back'){
 			Ti.App.fireEvent('showLog');
 			rightNav_btn.title= 'Back';
@@ -64,9 +64,13 @@ function RecordsWindow() {
 					duration: 500
 			}));
 		}
+	});  */
+	
+	rightNav_btn.addEventListener('click', function() {
+		var questions = require('ui/common/help_section/help_questions');
+		var questionsWindow = new questions();
+		questionsWindow.open();
 	});
-	
-	
 	
 	
 	

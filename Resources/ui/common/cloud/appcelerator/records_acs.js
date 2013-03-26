@@ -17,12 +17,17 @@ function getRecordsACS(query /*, new_child_id */)
 						continue;
 					}
 					
-					if(/^\d+$/.test(record.child_id)) { 
+					if(record.child_id==null || record.child_id==undefined || /^\d+$/.test(record.child_id)) { 
 				    	deleteObjectACS('records', record.id);
 				    	 continue; 
 				    }
 					
 					var new_child_id = getChildByCloudId(record.child_id)[0].id;
+					
+					if(new_child_id==null || new_child_id==undefined) {
+						deleteObjectACS('records', record.id);
+						continue;
+					}
 					
 					var record_local_id = insertRecordLocal(new_child_id);
 					updateRecordCloudIdLocal(record_local_id, record.id);

@@ -6,14 +6,14 @@
     <property name="acs-oauth-secret-development" type="string">AwR45GoQ5yVREWIzdOIDCYtUanzfb8Q6</property>
     <property name="acs-oauth-key-development" type="string">AYmQrJg5YcImyGMzIM7gB3nZe0t5XaUG</property>
     <property name="acs-api-key-development" type="string">dRnmtDoqvYrE8LqGV27Cft9YvNEFX8ce</property>
-    <id>com.localversion.localversion</id>
-    <name>LocalVersion</name>
+    <id>com.starsearth.starsearth</id>
+    <name>StarsEarth</name>
     <version>1.0</version>
     <publisher>adarshhasija</publisher>
     <url>http://</url>
     <description>not specified</description>
     <copyright>2013 by adarshhasija</copyright>
-    <icon>appicon.png</icon>
+    <icon>family.png</icon>
     <persistent-wifi>false</persistent-wifi>
     <prerendered-icon>false</prerendered-icon>
     <statusbar-style>default</statusbar-style>

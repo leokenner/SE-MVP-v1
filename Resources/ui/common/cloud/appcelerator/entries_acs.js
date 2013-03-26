@@ -17,13 +17,17 @@ function getEntriesACS(query /*, record_local_id, latest_date, latest_time */)
 				    	continue;
 				    }
 				    
-				    var record = getRecordByCloudIdLocal(entry.record_id);
-				    record = record[0];
-				    
-				    if(/^\d+$/.test(entry.entry_id)) { 
+				    if(entry.record_id==null || entry.record_id==undefined || /^\d+$/.test(entry.record_id)) { 
 				    	deleteObjectACS('entries', entry.id);
 				    	 continue; 
 				    }
+				    
+				    var record = getRecordByCloudIdLocal(entry.record_id);
+				    record = record[0];
+				    if(record.id==null || record.id==undefined) {
+				    	deleteObjectACS('entries', entry.id);
+				    	continue;
+				    }			    
 				    
 					var entry_local_id = insertEntryLocal(record.id, entry.main_entry, entry.date, entry.location);
 					updateEntryCloudIdLocal(entry_local_id, entry.id);
