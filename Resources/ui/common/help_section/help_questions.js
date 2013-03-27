@@ -176,23 +176,43 @@ function help_questions()
 				
 				var text = Ti.UI.createLabel({
 					text: "You can find StarsEarth at\n www.starsearth.com\n\n You can also find StarsEarth on facebook at\n "+
-							"www.facebook.com/starsearth\n\n Tap this button to like StarsEarth on facebook and be up to date "+
-							"with StarsEarth news.",
+							"www.facebook.com/starsearth\n\n Please like the page in order to be up to date with StarsEarth news.",
 					textAlign: 1,
 					width: '95%',
 					top: 20,
 				});
 				
-				var like_btn = Ti.UI.createLabel({
+			/*	var like_btn = Ti.UI.createButtonBar({
 					top: 20,
 					width: '50%',
+					style: Titanium.UI.iPhone.SystemButtonStyle.BAR,
 					height: 50,
 				});
 				
-				Ti.Facebook.requestWithGraphPath('me/likes/193450260781502', {}, 'GET', function(e) {
-					if(e.success) alert(e.result); else if(e.error) alert(e.error);
+				like_btn.addEventListener('click', function() {
+					Ti.Facebook.requestWithGraphPath("me/og:likes?object=https://www.facebook.com/msdofficial&access_token="+
+												Ti.Facebook.getAccessToken()+'"', {}, 'POST', function(e) {
+													if(e.success) alert('it works');
+													else if(e.error) alert(e.error);
+												});
 				});
-				break;
+				
+				Ti.Facebook.requestWithGraphPath('me/likes/118306468218564', {}, 'GET', function(e) {
+					if(e.success) {
+						var result = JSON.parse(e.result); 
+						if(result.data.length > 0) {
+							like_btn.labels = ['Liked, Thank you!'];
+							like_btn.color = 'black';
+							like_btn.backgroundColor = 'white';
+						}
+						else if(result.data.length == 0) {
+							like_btn.labels = ['Like'];
+							like_btn.color = 'white';
+							like_btn.backgroundColor = 'blue';
+						}
+					} else if(e.error) alert(e.error);
+				});
+				break; */
 				
 			default: break;
 		}

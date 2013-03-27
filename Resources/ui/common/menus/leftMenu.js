@@ -62,6 +62,10 @@ function insertChildren()
         }
         var row = Ti.UI.createTableViewRow({ title: 'Create New Child', color: 'white' });
         row.addEventListener('click', function() {
+        	if(!Titanium.Network.online) { 
+        		alert('You are not connected to the internet. New child profile cannot be created');
+        		return;
+        	}
         	var row_id = insertChildLocal(Titanium.App.Properties.getString('user'), 'New','Child',null,null,null);
         	createObjectACS('children', { id: row_id, user_id: Titanium.App.Properties.getString('user'), first_name: 'New', last_name: 'Child', });
         	Titanium.App.Properties.setString('child', row_id);

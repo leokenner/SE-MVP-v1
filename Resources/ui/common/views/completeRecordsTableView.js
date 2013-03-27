@@ -67,7 +67,6 @@ function completeRecordsTableView()
 	});
 	
 	table.addEventListener('eventAdded', function(e) {
-		//alert(e);
 		var section = table.data[0];
 		var row = section.getRows()[e.index];
 		var view = row.getChildren()[0];
@@ -77,12 +76,6 @@ function completeRecordsTableView()
 	
 	var personalCard = require('ui/common/user/personalCard');
 	var personalCardView = new personalCard();
-	
-	
-	//var sectionRecords = Ti.UI.createTableViewSection();
-	//var sectionPersonal = Ti.UI.createTableViewSection();
-	//sectionPersonal.add(Ti.UI.createTableViewRow({ height: 20, }));
-	//table.data = [sectionRecords, sectionPersonal];
 	table.setFooterView(personalCardView);
 	self.add(table);
 	
@@ -145,6 +138,8 @@ function completeRecordsTableView()
 				table.appendSection(section);
 				//table.data = [sectionRecords, sectionPersonal];
 				table.scrollToIndex(0);
+				
+				loadTable();
 			}
 		}); 
 	});

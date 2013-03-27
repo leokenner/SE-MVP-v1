@@ -89,6 +89,11 @@ save_btn.addEventListener('click', function() {
 	if(medication_test && dosage_test && frequency_test && symptoms_test && date_test)
 	{
 			if(treatment.id == null) {
+				if(!Titanium.Network.online) {
+					alert('Error:\n You are not connected to the internet. Cannot create new treatment');
+					return;
+				}
+				
 				if(treatment.appointment_id != null) {
 					var appointment_id = '"'+treatment.appointment_id+'"';
 					treatment.id = insertTreatmentLocal(null,appointment_id,start_date.text,end_date.text,medication.value,dosage.value,frequency.text);

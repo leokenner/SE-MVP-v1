@@ -124,6 +124,7 @@ Ti.include('ui/common/cloud/appcelerator/treatments_acs.js');
 	width: '70%',
 	top: '45%',
 	backgroundColor: 'none',
+	font: { fontWeight: 'bold', },
 	color: 'blue',
 	textAlign: 1,
 	zIndex: 2,

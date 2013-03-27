@@ -103,10 +103,10 @@ function profile(child)
 		width: '55%' 
 		});
 	
-	sectionMain.rows[0].add(lastName_title);
-	sectionMain.rows[0].add(last_name);
-	sectionMain.rows[1].add(firstName_title);
-	sectionMain.rows[1].add(first_name);
+	sectionMain.rows[0].add(firstName_title);
+	sectionMain.rows[0].add(first_name);
+	sectionMain.rows[1].add(lastName_title);
+	sectionMain.rows[1].add(last_name);
 	sectionMain.rows[2].add(sex_title);
 	sectionMain.rows[2].add(sex);
 	sectionMain.rows[3].add(dateOfBirth_title);

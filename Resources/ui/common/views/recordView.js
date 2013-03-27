@@ -58,41 +58,6 @@ function recordView(input)
 			}
 				Ti.App.fireEvent('eventAdded');
 		}
-		
-		
-	/*	if(input.incident) { 
-			var row = Ti.UI.createTableViewRow();
-			var incidentView = require('ui/common/views/incidentView');
-			incidentView = new incidentView(input.incident);
-			row.add(incidentView);
-			
-			row.setHeight(incidentView.height);
-			table.appendRow(row);
-			table.setHeight(200+table.height);
-			
-			var full_record = getAppointmentsForIncidentLocal(input.incident.id);
-			for(var i=0;i < full_record.length; i++) {
-				var appointment = full_record[i];
-				var doctor = getDoctorByAppointmentLocal(appointment.id);
-				appointment.doctor = doctor[0];
-				appointment.symptoms = getSymptomsOfAppointmentLocal(appointment.id);
-				var treatments = getTreatmentsForAppointmentLocal(appointment.id);
-				for(var i=0;i<treatments.length;i++) {
-					treatments[i].symptoms = getSymptomsOfTreatmentLocal(treatments[i].id);
-					treatments[i].sideEffects = getSideEffectsOfTreatmentLocal(treatments[i].id);
-				}
-				
-				
-				var appointmentView = require('ui/common/views/appointmentView');
-				appointmentView = new appointmentView({ appointment: appointment, treatments: treatments });
-			
-				var row = Ti.UI.createTableViewRow();
-				row.add(appointmentView);
-				table.appendRow(row);
-				table.setHeight(table.height+appointmentView.height);
-				Ti.App.fireEvent('eventAdded');
-			}
-		}  */
 	}
 	
 	var footerView = Ti.UI.createView({ height: '45', width: '100%' });

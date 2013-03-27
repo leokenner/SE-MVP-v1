@@ -1,7 +1,7 @@
 
 
-Ti.Facebook.appid = '430480410336850';
-Ti.Facebook.permissions = ['publish_actions', 'user_likes'];
+Ti.Facebook.appid = '553912771295725';
+Ti.Facebook.permissions = ['publish_actions'];
 Ti.Facebook.addEventListener('login', function(f) {
     if(f.success) {
  		var user = externalAccountLoginACS();
@@ -18,7 +18,6 @@ function facebookGraphRequestACS(path, params, httpMethod)
 	Ti.Facebook.requestWithGraphPath(path, params, httpMethod, function(e) {
 		   			if(e.success) {
 		   			 	var data= JSON.parse(e.result);
-		   			 	alert(data);
 		    			//updateUserACS(data);
 		   			 }
 		   			 else if(e.error) {

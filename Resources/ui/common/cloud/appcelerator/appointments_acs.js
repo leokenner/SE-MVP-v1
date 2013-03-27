@@ -75,8 +75,6 @@ function updateAppointmentsACS()
 			});
 		}
 		else {
-			//appointments[i].user_id = user.cloud_id;
-			//createObjectACS('appointments', appointments[i]);
 		}
 	}
 }

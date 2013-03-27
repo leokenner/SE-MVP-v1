@@ -90,8 +90,7 @@ function updateActivitiesACS()
 			});
 		}
 		else {
-			//activities[i].user_id = user.cloud_id;
-			//createObjectACS('activities', activities[i]);
+
 		}
 	}
 }

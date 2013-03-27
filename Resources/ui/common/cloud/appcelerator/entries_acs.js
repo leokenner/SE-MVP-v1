@@ -5,10 +5,6 @@ function getEntriesACS(query /*, record_local_id, latest_date, latest_time */)
 	Cloud.Objects.query({ classname: 'entries', where: query }, 
 		function (e) {
     		if (e.success) {
-    			if(e.entries.length == 0) {
-    			//	Ti.App.fireEvent('loadFromCloudComplete');
-    			//	return;
-    			} 
     			for(var i=e.entries.length-1;i > -1 ;i--) { 
 				    var entry = e.entries[i];
 				    
@@ -68,9 +64,6 @@ function updateEntriesACS()
 			});
 		}
 		else {
-			//entries[i].local_id = entries[i].id;
-			//entries[i].user_id = user.cloud_id;
-			//createObjectACS('entries', entries[i]);
 		}
 	}
 }

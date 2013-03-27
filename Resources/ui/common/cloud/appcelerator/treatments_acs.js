@@ -5,10 +5,6 @@ function getTreatmentsACS(query)
 	Cloud.Objects.query({ classname: 'treatments', where: query }, 
 		function (e) {
     		if (e.success) {
-    			if(e.treatments.length == 0) {
-    			//	Ti.App.fireEvent('loadFromCloudComplete');
-    			//	return;
-    			} 
     			for(var i=e.treatments.length-1;i > -1 ;i--) { 
 				    var treatment = e.treatments[i];
 				    
@@ -101,8 +97,6 @@ function updateTreatmentsACS()
 			});
 		}
 		else {
-			//treatments[i].user_id = user.cloud_id;
-			//createObjectACS('treatments', treatments[i]);
 		}
 	}
 }

@@ -76,7 +76,7 @@ function appointment(input)
 		var name_test=false, dateTime_test=false, symptoms_test=false;
 
 
-		if(!isValidDateTime(sectionDateTime.rows[0].title)) { alert('You may have entered a date that has already passed. Kindly recheck'); }
+		if(!isValidDateTime(sectionDateTime.rows[0].title) && complete_switcher.value == false) { alert('You may have entered a date that has already passed. Kindly recheck'); }
 		else { dateTime_test = true; }
 		//Remove the whitespace then test to make sure there are only letters
 		var onlyLetters = /^[a-zA-Z]/.test(name.value.replace(/\s/g, ''));
@@ -92,6 +92,11 @@ function appointment(input)
 			if(diagnosis.value != null) { diagnosis.value = diagnosis.value.replace("'", "''"); } //If diagnosis exists, remove quotes before submitting
 			
 			if(appointment.id == null) {
+				if(!Titanium.Network.online) {
+					alert('Error:\n You are not connected to the internet. Cannot create new appointment');
+					return;
+				}
+				
 				var entry_id = '"'+appointment.entry_id+'"';
 				appointment.id = insertAppointmentLocal(entry_id,appointment.date,appointment.time,diagnosis.value);
 				appointment.doctor.id = insertDoctorForAppointmentLocal(appointment.id,name.value,location.value,street.value,city.value,state.value,zip.value,country.value);

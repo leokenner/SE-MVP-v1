@@ -80,6 +80,11 @@ save_btn.addEventListener('click', function() {
 	if(activity_test && frequency_test && date_test && goals_test)
 	{
 		if(activity.id == null) {
+			if(!Titanium.Network.online) {
+				alert('Error:\n You are not connected to the internet. Cannot create new activity');
+				return;
+			}
+			
 			if(activity.appointment_id != null) {
 				var appointment_id = '"'+activity.appointment_id+'"';
 				activity.id = insertActivityLocal(null,appointment_id, activity_field.value, start_date.text, end_date.text, location.value, frequency.text);

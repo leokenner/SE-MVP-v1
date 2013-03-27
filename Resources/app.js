@@ -17,6 +17,8 @@ if (Ti.version < 1.8 ) {
 // This is a single context application with multiple windows in a stack
 (function() {
 	Ti.include('ui/common/login_logout.js');
+	Ti.include('ui/common/database/database.js');
+	Ti.include('ui/common/database/users_db.js');
 	
 	//render appropriate components based on the platform and form factor
 	var osname = Ti.Platform.osname,
@@ -41,13 +43,23 @@ if (Ti.version < 1.8 ) {
 		// Android uses platform-specific properties to create windows.
 		// All other platforms follow a similar UI pattern.
 		if (osname === 'android') {
-			mainWindow = require('ui/handheld/android/ApplicationWindow');
+			//mainWindow = require('ui/handheld/android/ApplicationWindow');
+			mainWindow = require('ui/common/RecordsWindow');
 		}
 		else {
 			mainWindow = require('ui/common/RecordsWindow');
 		}
 	}
 	var count=0;
+	
+	initUsersDBLocal();   //init only users here so that the code to check on an existing user does not throw an error
+	var users = getAllUsersLocal();
+	if(users.length > 0) {
+		Titanium.App.Properties.setObject('loggedInUser', users[0]);
+	}
+	else {
+		Titanium.App.Properties.setObject('loggedInUser', null);
+	} 
 	
 	mainCover = new mainCover();
 	mainCover.open();

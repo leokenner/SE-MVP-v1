@@ -51,6 +51,11 @@ function entry_form(input)
 		}
 		
 		if(entry.record_id == null) {
+			if(!Titanium.Network.online) {
+				alert('Error:\n You are not connected to the internet. Cannot create new entry');
+				return;
+			}
+			
 			entry.record_id = insertRecordLocal(Titanium.App.Properties.getString('child'));
 			entry.id = insertEntryLocal(entry.record_id,main_entry.value,entry.date,location.value);
 			updateRecordLocal(entry.record_id,entry.id,'entry',timeFormatted(new Date()).date,timeFormatted(new Date()).time);
